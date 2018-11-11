@@ -9,7 +9,8 @@ import webpack from 'webpack'
 import config from '../webpack.config.dev'
 import open from 'open'
 
-const webMid = require('koa-webpack-dev-middleware')
+import webMid from 'koa-webpack-dev-middleware'
+import hotMid from 'koa-webpack-hot-middleware'
 
 const port = 3000
 const app = new Koa()
@@ -20,13 +21,12 @@ app.use(webMid(compiler),{
     noInfo: true,
     publicPath: config.output.publicPath
 })
-app.use(require('koa-webpack-hot-middleware')(compiler))
+app.use(hotMid(compiler))
 router.get('*', async ctx => {
     ctx.set('Allow', 'GET')
     try {
         if (ctx.get('error')) throw new Error(ctx.get('error'))
         await sendfile(ctx,path.join( __dirname, '../src/index.html'))
-        if (!ctx.status) ctx.throw(404)
     }
     catch(err){
         ctx.status = status.NOT_FOUND
@@ -35,7 +35,5 @@ router.get('*', async ctx => {
 })
 app.use(router.routes())
 app.use(router.allowedMethods())
-const server  = app.listen(port, () => {
-    open(`http://localhost:${port}`)
-})
+const server  = app.listen(port)
 export default server

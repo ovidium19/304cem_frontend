@@ -8,7 +8,7 @@
     "open:src": "babel-node tools/server.js",
     "lint": "node_modules/.bin/esw webpack.config.* src tools",
     "lint:watch": "npm run lint -- --watch",
-    "test": "jest src tools",
+    "test": "jest src tools --coverage",
     "test:watch": "node_modules/.bin/jest --coverage --watchAll",
     "lint:fix": "esw --fix "
   },
