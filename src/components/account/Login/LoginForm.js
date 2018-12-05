@@ -4,7 +4,7 @@ import TextInput from '../../common/formElements/TextInput'
 import { NavLink } from 'react-router-dom'
 
 const LoginForm = ({onChange, onSubmit, loading, errors, user}) => (
-    <div className='d-flex justify-content-center align-items-center form-container flex-grow-1'>
+    <div className='d-flex justify-content-center align-items-center form-container flex-grow-1 py-2'>
         <div className='w-100-md w-50-lg form-box-centered '>
             <form name='loginForm'>
                 <TextInput

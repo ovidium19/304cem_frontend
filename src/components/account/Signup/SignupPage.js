@@ -12,7 +12,7 @@ export class SignupPage extends React.Component {
     constructor(props){
         super(props)
         this.state = {
-            user: Object.assign({},this.props.user, {repeatPassword: '', name: '', email: ''}),
+            user: Object.assign({},this.props.user, {repeatPassword: '', name: '', email: '', roles: 'user'}),
             loading: false,
             redirect: false,
             errors: {}
@@ -60,8 +60,8 @@ export class SignupPage extends React.Component {
         event.preventDefault()
         if (!(this.validateForm())) return
         this.setState({loading: true})
-
-        this.props.actions.signUpUser(this.state.user)
+        let {repeatPassword, ...userData} = this.state.user
+        this.props.actions.signUpUser(userData)
             .then(() => this.redirect())
             .catch(err => {
 

@@ -2,13 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {Redirect} from 'react-router-dom'
-import LoginForm from './LoginForm'
+import WelcomeUserMessage from './WelcomeUserMessage'
+import AccountForm from './AccountForm'
 import * as userActions from '../../../actions/userActions'
 import toastr from 'toastr'
 import '../Forms.less'
 
-export class LoginPage extends React.Component {
+export class AccountPage extends React.Component {
     constructor(props){
         super(props)
         this.state = {
@@ -28,60 +28,39 @@ export class LoginPage extends React.Component {
         this.setState({user})
 
     }
-    validateForm() {
-        if (this.state.user.password.length < 6)
-        {
-            this.setState({
-                errors: {
-                    password: 'Your password must contain at least 6 characters'
-                }
-            })
-            return false
-        }
 
-        this.setState({
-            errors: {}
-        })
-        return true
-    }
     onSubmit(event) {
         event.preventDefault()
-        if (!(this.validateForm())) return
+
         this.setState({loading: true})
 
-        this.props.actions.logInUser(this.state.user)
+        this.props.actions.updateUser(this.state.user)
             .then(() => {
-                this.redirect()
+                toastr.success('Your role has been updated')
+                this.setState({loading: false})
             })
             .catch(err => {
                 toastr.error(err)
                 this.setState({loading: false})
             })
     }
-    redirect() {
-        this.setState({
-            loading: false,
-            redirect: true
-        })
-        toastr.success(`Logged in as ${this.state.user.username}`)
-    }
     render() {
-        if (this.state.redirect) {
-            return (
-                <Redirect to={`/account/${this.props.user.username}/`} />
-            )
-        }
         return (
-                <LoginForm
-                onChange = {this.onStateUpdate}
-                onSubmit = {this.onSubmit}
-                loading = {this.state.loading}
-                errors = {this.state.errors}
-                user = {this.state.user} />
+                <React.Fragment>
+                    <WelcomeUserMessage user={this.props.user} />
+                    <AccountForm
+                    onChange = {this.onStateUpdate}
+                    onSubmit = {this.onSubmit}
+                    loading = {this.state.loading}
+                    errors = {this.state.errors}
+                    user = {this.state.user}
+                    role = {this.props.user.roles} />
+                </React.Fragment>
+
             )
     }
 }
-LoginPage.propTypes = {
+AccountPage.propTypes = {
     user: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired
 }
@@ -96,4 +75,4 @@ function mapDispatchToProps(dispatch){
     }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(LoginPage)
+export default connect(mapStateToProps,mapDispatchToProps)(AccountPage)

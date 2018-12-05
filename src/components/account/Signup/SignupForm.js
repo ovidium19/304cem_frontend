@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import TextInput from '../../common/formElements/TextInput'
+import RadioInput from '../../common/formElements/RadioInput'
 import { NavLink } from 'react-router-dom'
 
 const SignupForm = ({onChange, onSubmit, loading, errors, user}) => (
-    <div className='d-flex justify-content-center align-items-center form-container flex-grow-1'>
+    <div className='d-flex justify-content-center align-items-center form-container flex-grow-1 py-2'>
         <div className='w-100-md w-50-lg form-box-centered '>
             <form name='SignupForm'>
                 <TextInput
@@ -51,6 +52,26 @@ const SignupForm = ({onChange, onSubmit, loading, errors, user}) => (
                 label='Name'
                 placeholder=''
                 type='text' />
+
+                <div className='form-group'>
+                    <RadioInput
+                    name='roles'
+                    value='user'
+                    checked={user.roles === 'user'}
+                    onChange={onChange}
+                    label='Basic user'
+                    keyId='1'
+
+                    />
+                    <RadioInput
+                    name='roles'
+                    value='user reviewer'
+                    checked={user.roles === 'user reviewer'}
+                    onChange={onChange}
+                    label="Advanced user (Review and publish other user's questions"
+                    keyId='2'
+                    />
+                </div>
 
                 <div className='row'>
                     <div className='col-4'>

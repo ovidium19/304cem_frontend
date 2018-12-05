@@ -4,6 +4,8 @@ export default {
     asyncCalls: 0,
     user: {
         username: '',
-        password: ''
+        password: '',
+        roles: '',
+        email: ''
     }
 }
