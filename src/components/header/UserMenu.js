@@ -10,7 +10,7 @@ const UserMenu = ({logged, location, username}) => (
                 <NavLink to='/' className='nav-link'>Home</NavLink>
             </li>
             <li className={`nav-item ${location == '/courses' ? 'active' : ''}`}>
-                <NavLink to='/courses' className='nav-link'>Learn</NavLink>
+                <NavLink to='/app/courses' className='nav-link'>Learn</NavLink>
             </li>
 
         { logged &&
@@ -19,7 +19,7 @@ const UserMenu = ({logged, location, username}) => (
                 </li>
         }
              <li className={`nav-item ${location == '/about' ? 'active' : ''}`}>
-                <NavLink to='/about' className='nav-link'>About</NavLink>
+                <NavLink to='/app/about' className='nav-link'>About</NavLink>
             </li>
         </ul>
     </React.Fragment>

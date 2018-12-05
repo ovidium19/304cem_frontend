@@ -19,6 +19,10 @@ export default function user(state=initialState.user, action){
                 password: ''
             }
         }
+        case types.USER_UPDATE_SUCCESS: {
+
+            return Object.assign({},state,{roles: action.roles})
+        }
     }
     return state
 }

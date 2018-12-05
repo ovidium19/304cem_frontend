@@ -17,7 +17,7 @@ const AccountMenu = ({logged, username, onSignOut}) => (
         :
             <ul className="navbar-nav ml-auto">
                 <li className='nav-item'>
-                    <NavLink to={`/user/${username}/account`} className='nav-link' activeClassName='active'>Account</NavLink>
+                    <NavLink to={`/account/${username}`} className='nav-link' activeClassName='active'>Account</NavLink>
                 </li>
                 <li className='nav-item'>
                     <NavLink to={`/user/${username}/signout`} className='nav-link' activeClassName='active' onClick={onSignOut}>Sign Out</NavLink>
