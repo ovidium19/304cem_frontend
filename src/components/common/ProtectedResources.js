@@ -1,7 +1,8 @@
 import React from 'react'
-import {Redirect} from 'react-router-dom'
+import {Redirect, Route} from 'react-router-dom'
 import toastr from 'toastr'
 import PropTypes from 'prop-types'
+import ResultPage from '../results/ResultPage'
 
 class ProtectedResources extends React.Component {
     constructor(props) {
@@ -31,7 +32,11 @@ class ProtectedResources extends React.Component {
                 <Redirect to={this.state.link} />
             )
         }
-        return null
+        return (
+            <React.Fragment>
+                <Route exact path={`${this.props.match.path}/user/:username/stats`} component={ResultPage} />
+            </React.Fragment>
+        )
     }
 }
 ProtectedResources.propTypes = {
