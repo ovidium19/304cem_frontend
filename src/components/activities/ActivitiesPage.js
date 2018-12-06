@@ -5,6 +5,9 @@ import { connect } from 'react-redux'
 import {bindActionCreators} from 'redux'
 import LoadingIcon from '../common/LoadingIcon'
 import * as activityActions from '../../actions/activityActions'
+import ActivitiesList from './ActivitiesList'
+import ActivityFilters from './ActivityFilters'
+import categories from '../common/categories'
 
 import _ from 'underscore'
 import './ActivitiesPage.less'
@@ -14,20 +17,45 @@ export class ActivitiesPage extends React.Component {
         super(props)
 
         this.state = {
-            defaultOptions: {
+            options: {
                 page: 1,
                 limit: 6
             },
+            filters: {
+                published: '',
+                category: '',
+            },
+            sortBy: 'total_answers',
             currentPage: 1,
-            updated: false
+            updated: false,
+            selectOptions: categories,
+            sortOptions: [
+                {
+                    value: 'avg_rating',
+                    text: 'Highest Rating'
+                },
+                {
+                    value: 'total_answers',
+                    text: 'Answers'
+                },
+                {
+                    value: 'avg_passrate',
+                    text: 'Pass Rate'
+                }
+            ]
         }
         this.onActivityClicked = this.onActivityClicked.bind(this)
+        this.onBlankClicked = this.onBlankClicked.bind(this)
+        this.onFilterUpdate = this.onFilterUpdate.bind(this)
+        this.applyFilters = this.applyFilters.bind(this)
+        this.onSortUpdate = this.onSortUpdate.bind(this)
+        this.createActivity = this.createActivity.bind(this)
     }
 
     componentDidMount() {
         if (this.props.activities.length == 0 && this.state.updated == false) {
 
-            this.props.actions.getActivities(this.props.user.header,this.props.user.username, this.state.defaultOptions).then(
+            this.props.actions.getActivities(this.props.user.header,this.props.user.username, this.state.options).then(
                 res => {
 
                     this.setState({
@@ -42,8 +70,41 @@ export class ActivitiesPage extends React.Component {
         this.props.actions.removeActivities()
     }
 
+    onFilterUpdate(event) {
+        const field = event.target.name
+        const filters = Object.assign({},this.state.filters)
+
+        filters[field] = event.target.value
+        this.setState({filters})
+
+    }
+
+    onSortUpdate(event) {
+        this.setState({sortBy: event.target.value})
+
+    }
+
+    applyFilters(event) {
+        event.preventDefault()
+        let params = Object.assign({},this.state.options,this.state.filters,{sort: this.state.sortBy})
+        this.props.actions.getActivities(this.props.user.header,
+            this.props.user.username, params).then(res => {
+                console.log(res)
+                this.setState({
+                    updated: true,
+                    currentPage: 1
+                })
+            })
+    }
+    createActivity(e) {
+        e.preventDefault()
+        this.props.history.push('/app/activity/create')
+    }
     onActivityClicked(id) {
         console.log(id)
+    }
+    onBlankClicked(value) {
+        console.log(value)
     }
     render() {
         return (
@@ -51,11 +112,32 @@ export class ActivitiesPage extends React.Component {
             {this.props.loading ?
                 <LoadingIcon /> :
                 this.props.activities.length > 0 ?
-                    <React.Fragment>
-                        {JSON.stringify(this.props.activities)}
-                        {'count: ' + this.props.count}
+                <div className='activities-list p-0 card'>
+                    <div className='card-header'>
+                        <p className='display-4 text-center'>Activities</p>
+                        <div className='text-center'>
+                        <button className='btn btn-success' onClick={this.createActivity}>Create new Activity</button>
+                        </div>
+                        <div className='d-flex justify-content-center align-items-center'>
+                            <ActivityFilters
+                            onChange={this.onFilterUpdate}
+                            onSubmit={this.applyFilters}
+                            filters = {this.state.filters}
+                            loading = {this.props.loading}
+                            selectOptions = {this.state.selectOptions}
+                            onSortUpdate={this.onSortUpdate}
+                            sort = {this.state.sortBy}
+                            sortOptions = {this.state.sortOptions}
+                            />
 
-                    </React.Fragment>
+                        </div>
+                    </div>
+                    <ActivitiesList activities={this.props.activities}
+                    onClick={this.onActivityClicked}
+                    onBlankClick={this.onBlankClicked}
+                    klass={'card-body m-0 p-0'} />
+
+                </div>
 
                     :
                     <div>No data</div>

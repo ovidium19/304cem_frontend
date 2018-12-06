@@ -8,6 +8,14 @@ function generateAuthHeader(credentials){
 }
 
 export async function getActivities(header, username, params) {
+    let goodParams = Object.keys(params).reduce((p,c,i) => {
+        if (params[c]!=='') {
+            p[c] = params[c]
+        }
+        return p
+    },{})
+    console.log(goodParams)
+    console.log(header)
     return axios({
         url: `${GET_USER_ACTIVITIES_URL}/${username}`,
         baseURL: baseUrl,
@@ -15,7 +23,7 @@ export async function getActivities(header, username, params) {
         headers: {
             'Authorization': header
         },
-        params
+        params: goodParams
     }).then(res => {
         return res.data
     })
