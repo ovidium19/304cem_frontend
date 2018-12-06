@@ -1,5 +1,8 @@
 export default {
-    activities: [],
+    userActivities: {
+        count: 0,
+        data: []
+    },
     activity: {},
     results: [],
     asyncCalls: 0,

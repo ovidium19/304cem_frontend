@@ -7,7 +7,9 @@ import LoadingIcon from '../common/LoadingIcon'
 import * as resultsActions from '../../actions/resultsActions'
 import ResultStats from './ResultStats'
 import CategoryChart from './CategoryChart'
+import ResultList from './ResultList'
 import _ from 'underscore'
+import './ResultPage.less'
 
 export class ResultPage extends React.Component {
     constructor(props) {
@@ -24,7 +26,7 @@ export class ResultPage extends React.Component {
             categories: [],
             updated: false
         }
-        this.onNavigateToCourse = this.onNavigateToCourse.bind(this)
+        this.onResultClicked = this.onResultClicked.bind(this)
     }
 
     componentDidMount() {
@@ -37,10 +39,6 @@ export class ResultPage extends React.Component {
                         updated: true
                     })
                 }).catch(err => {
-
-                    this.setState({
-                        updated: true
-                    })
                 })
         }
     }
@@ -78,9 +76,12 @@ export class ResultPage extends React.Component {
         console.log(result)
         return result
     }
+    onResultClicked(id) {
+        console.log(id)
+    }
     render() {
         return (
-            <div className='container-fluid results mt-3'>
+            <div className='container-fluid results my-0 py-4'>
             {this.props.loading ?
                 <LoadingIcon /> :
                 this.props.results.length > 0 ?
@@ -90,6 +91,8 @@ export class ResultPage extends React.Component {
                             avgTime = {this.calculateAvgTime(this.props.results)} />
 
                             <CategoryChart data={this.calculateCategoryPercentages(this.props.results)} />
+                            <ResultList results = {this.props.results} onClick = {this.onResultClicked} />
+
                     </React.Fragment>
 
                     :

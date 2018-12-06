@@ -3,6 +3,7 @@ import {Redirect, Route} from 'react-router-dom'
 import toastr from 'toastr'
 import PropTypes from 'prop-types'
 import ResultPage from '../results/ResultPage'
+import ActivitiesPage from '../activities/ActivitiesPage'
 
 class ProtectedResources extends React.Component {
     constructor(props) {
@@ -35,6 +36,7 @@ class ProtectedResources extends React.Component {
         return (
             <React.Fragment>
                 <Route exact path={`${this.props.match.path}/user/:username/stats`} component={ResultPage} />
+                <Route exact path={`${this.props.match.path}/user/:username/activities`} component={ActivitiesPage} />
             </React.Fragment>
         )
     }

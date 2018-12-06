@@ -34,8 +34,10 @@ class CategoryChart extends React.Component {
     }
     render() {
         return (
-            <div className= ''>
-                <canvas id="categoryChart"></canvas>
+            <div className= 'mx-2 category-chart p-2 my-3'>
+                <p className='text-center display-4 text-danger'>Category chart</p>
+                <p className='text-muted mb-2 text-center'>This graph displays the ratio of categories of your results.</p>
+                <canvas id="categoryChart" />
                 <React.Fragment>{this.createChart()}</React.Fragment>
 
             </div>

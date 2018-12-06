@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const ResultStats = ({passRate, avgTime}) => (
-    <div className='d-flex flex-nowrap justify-content-center align-items center'>
-        <div className='flex-grow-1 border-success'>
-            <div className='card'>
+    <div className=' bg-none my-3 stats-page'>
+        <div className='flex-grow-1 border-success stats-container'>
+            <div className='card stats p-3'>
                 <div className='card-body'>
                     <div className = 'card-title text-center py-2 display-4'>
                         Pass Rate
@@ -15,9 +15,9 @@ const ResultStats = ({passRate, avgTime}) => (
                 </div>
             </div>
         </div>
-
-        <div className='flex-grow-1 border-success'>
-            <div className='card'>
+        <div className='gutter-20'/>
+        <div className='flex-grow-1 border-success stats-container'>
+            <div className='card stats p-3'>
                 <div className='card-body'>
                     <div className = 'card-title text-center py-2 display-4'>
                         Average Time
