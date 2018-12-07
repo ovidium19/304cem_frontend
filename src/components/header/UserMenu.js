@@ -14,8 +14,14 @@ const UserMenu = ({logged, location, username}) => (
             </li>
 
         { logged &&
-                <li className={`nav-item ${/hub$/g.test(location) ? 'active' : ''}`}>
-                    <NavLink to={`/user/${username}/hub`} className='nav-link'>Your Hub</NavLink>
+                <li className={`nav-item dropdown ${/hub$/g.test(location) ? 'active' : ''}`}>
+                   <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+                    Your Hub
+                    </a>
+                    <div className="dropdown-menu">
+                        <NavLink to={`/app/user/${username}/activities`} className='dropdown-item'>Activities</NavLink>
+                        <NavLink to={`/app/user/${username}/stats`} className='dropdown-item'>Stats</NavLink>
+                    </div>
                 </li>
         }
              <li className={`nav-item ${location == '/about' ? 'active' : ''}`}>
