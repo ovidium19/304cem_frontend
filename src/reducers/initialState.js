@@ -15,6 +15,7 @@ export default {
             color: ''
         },
         allow_anon: false,
+        allow_feedback: false,
         blanks: [],
         options: []
     },

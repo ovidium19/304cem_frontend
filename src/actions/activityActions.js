@@ -5,8 +5,14 @@ import * as actDb from '../api/activitiesApi'
 export function getActivitiesSuccess(data) {
     return {type: types.GET_ACTIVITIES_SUCCESS, data}
 }
+export function postActivitySuccess(data) {
+    return {type: types.POST_ACTIVITY_SUCCESS, data}
+}
 export function removeActivities() {
     return {type: types.REMOVE_ACTIVITIES}
+}
+export function removeActivity() {
+    return {type: types.REMOVE_ACTIVITY}
 }
 export function getActivities(header,username,params){
     return (dispatch, getState) => {
@@ -19,3 +25,15 @@ export function getActivities(header,username,params){
         })
     }
 }
+export function postActivity(header,activity) {
+    return (dispatch, getState) => {
+        dispatch(beginAsyncOp())
+        return actDb.postActivity(header,activity).then(res => {
+            dispatch(postActivitySuccess(Object.assign({},res)))
+        }).catch(err => {
+            dispatch(asyncError(err))
+            throw(err)
+        })
+    }
+}
+

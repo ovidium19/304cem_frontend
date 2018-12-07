@@ -44,6 +44,7 @@
     "koa-static": "^5.0.0",
     "less": "^3.8.1",
     "prop-types": "^15.6.2",
+    "rc-pagination": "^1.17.3",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "react-redux": "^5.1.1",

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import TextInput from '../../common/formElements/TextInput'
 import SelectInput from '../../common/formElements/SelectInput'
+import SelectInputInline from '../../common/formElements/SelectInputInline'
 import TextInputInline from '../../common/formElements/TextInputInline'
 import TextAreaInput from '../../common/formElements/TextAreaInput'
 import RadioInput from '../../common/formElements/RadioInput'
@@ -14,88 +15,114 @@ const ActivityForm = ({onChange, onSubmit, loading,
     <div className='d-flex justify-content-center align-items-center form-container flex-grow-1 py-2'>
         <div className='form-box-centered create-activity-form '>
             <form name='ActivityForm'>
-                <RadioInput
-                name='allow_anon'
-                label='Allow Anonymous'
-                onChange={onChange}
-                value={act.allow_anon == true ? 'false' : 'true'}
-                checked={act.allow_anon == true}
-                keyId = '1'
-                />
-                <TextInput
-                value={act.name}
-                onChange={onChange}
-                error={errors.name}
-                name='name'
-                label='Activity Name'
-                placeholder='Enter activity name...'
-                type='text' />
 
-                <TextAreaInput
-                value={act.text}
-                onChange={onChange}
-                error={errors.text}
-                name='text'
-                label='Activity Text'
-                placeholder='Enter activity text'
-                 />
+                <fieldset className='create-activity-fieldset border border-success p-2 my-3'>
 
-                <SelectInput
-                name='category'
-                label='Category'
-                onChange={onChange}
-                defaultOption='None'
-                value={act.category}
-                error={errors.category}
-                options={categoryOptions}
-                />
-                <SelectInput
-                name='music'
-                label='Music'
-                onChange={onChange}
-                defaultOption='None'
-                value={act.music}
-                error={errors.music}
-                options={musicOptions}
-                />
-                <SelectInput
-                name='correctSound'
-                label='Correct Sound'
-                onChange={onChange}
-                defaultOption='None'
-                value={act.incorrectSound}
-                error={errors.incorrectSound}
-                options={soundOptions}
-                />
-                <SelectInput
-                name='incorrectSound'
-                label='Incorrect Sound'
-                onChange={onChange}
-                defaultOption='None'
-                value={act.correctSound}
-                error={errors.correctSound}
-                options={soundOptions}
-                />
-                <SelectInput
-                name='styles backgroundColor'
-                label='Background Color'
-                onChange={onChange}
-                defaultOption='None'
-                value={act.styles.backgroundColor}
-                error={errors.styles.backgroundColor}
-                options={colorOptions}
-                />
-                <SelectInput
-                name='styles color'
-                label='Text Color'
-                onChange={onChange}
-                defaultOption='None'
-                value={act.styles.color}
-                error={errors.styles.color}
-                options={colorOptions}
-                />
+                    <legend className='create-activity-legend bg-success text-center font-weight-bold text-white'>
+                        Mandatory data
+                    </legend>
+                    <TextInputInline
+                    value={act.name}
+                    onChange={onChange}
+                    error={errors.name}
+                    name='name'
+                    label='Activity Name'
+                    placeholder='Enter activity name...'
+                    type='text' />
+
+                    <TextAreaInput
+                    value={act.text}
+                    onChange={onChange}
+                    error={errors.text}
+                    name='text'
+                    label='Activity Text'
+                    placeholder='Enter activity text'
+                    />
+                    <SelectInputInline
+                    name='category'
+                    label='Category'
+                    onChange={onChange}
+                    defaultOption='None'
+                    value={act.category}
+                    error={errors.category}
+                    options={categoryOptions}
+                    />
+                </fieldset>
+
+                <fieldset className='create-activity-fieldset border border-success p-2 my-3'>
+                    <legend className='create-activity-legend bg-success text-center font-weight-bold text-white'>
+                        Styles
+                    </legend>
+                    <SelectInputInline
+                    name='music'
+                    label='Music'
+                    onChange={onChange}
+                    defaultOption='None'
+                    value={act.music}
+                    error={errors.music}
+                    options={musicOptions}
+                    />
+                    <SelectInputInline
+                    name='correctSound'
+                    label='Correct Sound'
+                    onChange={onChange}
+                    defaultOption='None'
+                    value={act.correctSound}
+                    error={errors.correctSound}
+                    options={soundOptions}
+                    />
+                    <SelectInputInline
+                    name='incorrectSound'
+                    label='Incorrect Sound'
+                    onChange={onChange}
+                    defaultOption='None'
+                    value={act.incorrectSound}
+                    error={errors.incorrectSound}
+                    options={soundOptions}
+                    />
+                    <SelectInputInline
+                    name='styles backgroundColor'
+                    label='Background Color'
+                    onChange={onChange}
+                    defaultOption='None'
+                    value={act.styles.backgroundColor}
+                    error={errors.styles.backgroundColor}
+                    options={colorOptions}
+                    />
+                    <SelectInputInline
+                    name='styles color'
+                    label='Text Color'
+                    onChange={onChange}
+                    defaultOption='None'
+                    value={act.styles.color}
+                    error={errors.styles.color}
+                    options={colorOptions}
+                    />
+
+                </fieldset>
+                <fieldset className='create-activity-fieldset border border-success p-2 my-3'>
+                    <legend className='create-activity-legend bg-success text-center font-weight-bold text-white'>
+                        Settings
+                    </legend>
+                    <RadioInput
+                    name='allow_anon'
+                    label='Allow Anonymous'
+                    onChange={onChange}
+                    value={act.allow_anon == true ? 'false' : 'true'}
+                    checked={act.allow_anon == true}
+                    keyId = '1'
+                    />
+                    <RadioInput
+                    name='allow_feedback'
+                    label='Allow feedback'
+                    onChange={onChange}
+                    value={act.allow_feedback == true ? 'false' : 'true'}
+                    checked={act.allow_feedback == true}
+                    keyId = '2'
+                    />
+                </fieldset>
                 {act.blanks.length > 0 && act.blanks.map((b,i) => (
-                    <div className='card border-success my-2' key={'blank'+i}>
+                    <div className='card border-success my-3' key={'blank'+i}>
                         <p className='lead text-center'>{`Blank ${i+1}`}</p>
                         <div className='card-body'>
                                 <div className='form-group' >

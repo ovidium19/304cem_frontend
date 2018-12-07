@@ -83,8 +83,9 @@ export class CreateActivity extends React.Component {
                 act.styles[names[1]] = event.target.value
                 break
             }
-            case 'allow_anon': {
-                act.allow_anon = event.target.value == 'true' ? true : false
+            case 'allow_anon':
+            case 'allow_feedback': {
+                act[names[0]] = event.target.value == 'true' ? true : false
                 break
             }
             default: {
@@ -145,27 +146,39 @@ export class CreateActivity extends React.Component {
             toastr.error(`There are ${errors} errors in the form`)
         }
         else {
-            console.log(this.state.shape)
              this.setState({
                  errors:  JSON.parse(JSON.stringify(this.state.shape))
              })
-            toastr.success('No errors')
         }
-        return errors > 0
+        return errors == 0
     }
     onSubmit(event) {
+        console.log('Submiting form ... ')
         event.preventDefault()
         if (!(this.validateForm())) return
         //this.setState({loading: true})
-
-        console.log(this.state.act)
+        let data = Object.assign({},this.state.act)
+        data.published = false
+        data.under_review = false
+        data.username = this.props.user.username
+        data.timestamp = new Date().toLocaleString()
+        this.props.actions.postActivity(this.props.user.header,data)
+            .then(res => {
+                console.log(res)
+                toastr.success('Activity posted')
+                this.props.actions.removeActivity()
+                this.redirect()
+            })
+            .catch(err => {
+                console.log(err)
+                toastr.danger(err.message)
+            })
     }
     redirect() {
         this.setState({
             loading: false,
             redirect: true
         })
-        toastr.success(`Activity created`)
     }
     render() {
         if (this.state.redirect) {
