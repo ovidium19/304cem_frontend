@@ -50,7 +50,10 @@ export class ActivityPage extends React.Component {
         }
     }
     componentWillUnmount() {
-        //this.props.actions.removeActivity()
+        if (!(/update/.test(this.state.link))) {
+            this.props.actions.removeActivity()
+        }
+
     }
     calculateAnswerChoices(index) {
         let data = this.props.act.answers
