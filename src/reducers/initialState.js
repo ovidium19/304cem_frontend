@@ -17,7 +17,9 @@ export default {
         allow_anon: false,
         allow_feedback: false,
         blanks: [],
-        options: []
+        options: [],
+        feedback: [],
+        answers: []
     },
     results: [],
     asyncCalls: 0,

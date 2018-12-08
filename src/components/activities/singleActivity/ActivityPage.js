@@ -3,15 +3,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {bindActionCreators} from 'redux'
-import LoadingIcon from '../../common/LoadingIcon'
 import ActivityTitleDiv from './ActivityTitleDiv'
 import ActivityStats from '../ActivityStats'
 import * as activityActions from '../../../actions/activityActions'
-import Pagination from 'rc-pagination'
+import FeedbackList from './feedback/FeedbackList'
 import 'rc-pagination/assets/index.css'
 
 import _ from 'underscore'
 import PieChart from '../../results/PieChart'
+import LoadingIcon from '../../common/LoadingIcon'
 
 
 export class ActivityPage extends React.Component {
@@ -20,17 +20,18 @@ export class ActivityPage extends React.Component {
 
         this.state = {
             options: {
-                page: 1,
                 limit: 5
             },
             redirect: false,
             link: '',
             sortBy: 'timestamp',
             currentPage: 1,
+            feedbackStartIndex: 0,
             updated: false,
         }
         this.onPageSelection = this.onPageSelection.bind(this)
         this.onGoBack = this.onGoBack.bind(this)
+        this.onPublish = this.onPublish.bind(this)
     }
 
     componentDidMount() {
@@ -38,7 +39,6 @@ export class ActivityPage extends React.Component {
 
             this.props.actions.getActivityById(this.props.user.header,this.props.match.params.id).then(
                 res => {
-
                     this.setState({
                         updated: true
                     })
@@ -70,18 +70,11 @@ export class ActivityPage extends React.Component {
          return result
     }
     onPageSelection(cur,size) {
+        console.log(cur,size)
         this.setState({
-            options:{
-                page: cur,
-                limit: size
-            },
-            updated: false
-        },() => {
-            let params = Object.assign({},this.state.options,this.state.filters,{sort: this.state.sortBy})
-            console.log(params)
-            this.getActivities(params)
+            currentPage: cur,
+            feedbackStartIndex: (cur-1)*this.state.options.limit,
         })
-
     }
     onGoBack(e){
         e.preventDefault()
@@ -90,6 +83,12 @@ export class ActivityPage extends React.Component {
             link: `/app/user/${this.props.user.username}/activities`
         })
     }
+    onPublish(e) {
+        e.preventDefault()
+        console.log(this.props.act.published)
+        console.log(this.props.act.under_review)
+    }
+
     render() {
         if (this.state.redirect) {
             return <Redirect to={this.state.link} />
@@ -98,38 +97,55 @@ export class ActivityPage extends React.Component {
 
             <div className='container-fluid single-activity my-0 py-4'>
                 <div className='go-back-button my-3 ml-3'>
-                    <button className='btn btn-primary' onClick={this.onGoBack}><i className="fas fa-arrow-left pr-2"></i>Go Back</button>
+                    <button className='btn btn-primary' onClick={this.onGoBack}><i className="fas fa-arrow-left pr-2"/>Go Back</button>
                 </div>
-                <ActivityTitleDiv
-                title={this.props.act.name}
-                text = {this.props.act.text}
-                status = {this.props.act.published ? 'Published' : this.props.act.under_review ? 'Under Review' : 'Unpublished'}
-                color = {this.props.act.published ? 'green' : 'red'}
-                />
-                <div className='jumbotron activity-item ml-3'>
-                    <p className='display-4 text-center'>Stats</p>
-                    {
-                        this.props.act._id ?  <ActivityStats activity={this.props.act} /> : null
-                    }
-
-                </div>
-                <div className='jumbotron activity-answer-charts ml-3' >
                 {
-                    this.props.act.blanks.map((b,i) => (
-                            <PieChart
-                            data={this.calculateAnswerChoices(i)}
-                            key={b+i}
-                            id = {`${b+i}chart`}
-                            title = {'Blank: '+b}
-                            description = {'Choices made by users on this blank.'}
-                            klass = {'pie-chart-flex'}
+                    this.props.loading ? <LoadingIcon /> :
+                    <React.Fragment>
+                        <ActivityTitleDiv
+                        title={this.props.act.name}
+                        text = {this.props.act.text}
+                        status = {this.props.act.published ? 'Published' : this.props.act.under_review ? 'Under Review' : 'Unpublished'}
+                        color = {this.props.act.published ? 'green' : 'red'}
+                        onPublish = {this.onPublish}
+                        />
+                        <div className='jumbotron activity-item ml-3'>
+                            <p className='display-4 text-center'>Stats</p>
+                            {
+                                this.props.act._id ?  <ActivityStats activity={this.props.act} /> : null
+                            }
+
+                        </div>
+                        {
+                            this.props.act.total_answers > 0 &&
+                            <div className='jumbotron activity-answer-charts ml-3' >
+                                {
+                                    this.props.act.blanks.map((b,i) => (
+                                            <PieChart
+                                            data={this.calculateAnswerChoices(i)}
+                                            key={b+i}
+                                            id = {`${b+i}chart`}
+                                            title = {'Blank: '+b}
+                                            description = {'Choices made by users on this blank.'}
+                                            klass = {'pie-chart-flex'}
+                                            />
+                                    ))
+                                }
+                            </div>
+                        }
+
+                        <div className='jumbotron activity-feedback ml-3'>
+                            <FeedbackList
+                                feedbacks = {this.props.feedback.slice(
+                                this.state.feedbackStartIndex, this.state.feedbackStartIndex + this.state.options.limit)}
+                                onPageClick = {this.onPageSelection}
+                                count = {this.props.feedback.length}
+                                curPage = {this.state.currentPage}
+                                pageSize = {this.state.options.limit}
                             />
-                    ))
+                        </div>
+                    </React.Fragment>
                 }
-                 </div>
-
-
-
             </div>
         )
 
@@ -139,6 +155,7 @@ export class ActivityPage extends React.Component {
 ActivityPage.propTypes = {
     user: PropTypes.object.isRequired,
     act: PropTypes.object.isRequired,
+    feedback: PropTypes.array,
     loading: PropTypes.bool,
     actions: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
@@ -152,10 +169,14 @@ function mapStateToProps(state,ownProps) {
     if (state.user.hasOwnProperty('header')){
         user.header = state.user.header
     }
-
+    //reverting feedbacks
+    let feedback = JSON.parse(JSON.stringify(state.activity.feedback))
+    feedback.reverse()
+    console.log(feedback)
     return {
         user,
         act: state.activity,
+        feedback,
         loading: state.asyncCalls > 0
     }
 }

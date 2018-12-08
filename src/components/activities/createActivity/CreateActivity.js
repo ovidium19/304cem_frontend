@@ -127,11 +127,19 @@ export class CreateActivity extends React.Component {
                     errors = errors + 1
                     allErrors.blanks[i] = 'This blank is not in the text!'
                 }
+                if (b.includes(' ')) {
+                    errors = errors + 1
+                    allErrors.blanks[i] = 'You can only blank individual words, no spacing.'
+                }
                 else {
                     this.state.act.options[i].map((o,j) => {
                         if (o.length == 0){
                             errors = errors + 1
                             allErrors.options[i][j] = 'Options cannot be empty.'
+                        }
+                        if (o.includes(' ')) {
+                            errors = errors + 1
+                            allErrors.options[i][j] = 'Can only have 1 word, no spacing.'
                         }
                     })
                 }
