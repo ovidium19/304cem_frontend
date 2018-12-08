@@ -8,6 +8,9 @@ export function getActivitiesSuccess(data) {
 export function postActivitySuccess(data) {
     return {type: types.POST_ACTIVITY_SUCCESS, data}
 }
+export function getActivityByIdSuccess(data) {
+    return {type: types.GET_ACTIVITY_SUCCESS, data}
+}
 export function removeActivities() {
     return {type: types.REMOVE_ACTIVITIES}
 }
@@ -25,11 +28,23 @@ export function getActivities(header,username,params){
         })
     }
 }
+
 export function postActivity(header,activity) {
     return (dispatch, getState) => {
         dispatch(beginAsyncOp())
         return actDb.postActivity(header,activity).then(res => {
             dispatch(postActivitySuccess(Object.assign({},res)))
+        }).catch(err => {
+            dispatch(asyncError(err))
+            throw(err)
+        })
+    }
+}
+export function getActivityById(header,id) {
+    return (dispatch, getState) => {
+        dispatch(beginAsyncOp())
+        return actDb.getActivityById(header,id).then(res => {
+            dispatch(getActivityByIdSuccess(Object.assign({},res)))
         }).catch(err => {
             dispatch(asyncError(err))
             throw(err)

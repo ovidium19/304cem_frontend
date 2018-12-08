@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -27,7 +27,9 @@ export class ActivitiesPage extends React.Component {
                 published: '',
                 category: '',
             },
-            sortBy: 'total_answers',
+            redirect: false,
+            link: '',
+            sortBy: '',
             currentPage: 1,
             updated: false,
             selectOptions: categories,
@@ -118,7 +120,7 @@ export class ActivitiesPage extends React.Component {
         this.setState({
             options: {
                 page: 1,
-                limit: 2
+                limit: 5
             }
         }, () => {
             let params = Object.assign({},this.state.options,this.state.filters,{sort: this.state.sortBy})
@@ -133,12 +135,19 @@ export class ActivitiesPage extends React.Component {
     }
 
     onActivityClicked(id) {
-        console.log(id)
+        console.log(id),
+        this.setState({
+            redirect: true,
+            link: `/app/${this.props.user.username}/activity/${id}`
+        })
     }
     onBlankClicked(value) {
         console.log(value)
     }
     render() {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.link} />
+        }
         return (
             <div className='container-fluid activities my-0 py-4'>
                 <div className='activities-list p-0 card'>

@@ -43,3 +43,16 @@ export async function postActivity(header,data) {
         return res.data
     })
 }
+export async function getActivityById(header,id) {
+    return axios({
+        url: `${POST_ACTIVITY}/${id}`,
+        baseURL: baseUrl,
+        method: 'GET',
+        headers: {
+            'Authorization': header
+        }
+    }).then(res => {
+        console.log(res.data)
+        return res.data[0]
+    })
+}

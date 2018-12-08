@@ -12,6 +12,61 @@
         }
     }
 }
+.activity-stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: nowrap;
+    div > p:first-of-type {
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+    .activity-rating {
+        padding-top: 1.4em;
+        .feedback-count {
+            margin-top: -1.2em;
+        }
+    }
+
+    @media all and (max-width: 600px ) {
+        flex-direction: column;
+        align-items: stretch;
+        div  {
+            text-align: center;
+            border-top: 1px solid lightgrey;
+            border-bottom: 1px solid lightgrey;
+        }
+    }
+
+}
+.pie-chart.pie-chart-flex {
+    max-width: 45%;
+    .pie-title {
+        font-size: 1rem;
+    }
+    @media all and (max-width: 900px ) {
+            max-width: 80%;
+            .pie-title{
+                font-size: 3.5rem;
+                font-weight: 300;
+                line-height: 1.2;
+            }
+    }
+}
+.activity-answer-charts{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    @media all and (max-width: 900px ) {
+        flex-wrap: nowrap;
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
 .activities {
     background: rgba(255,175,75,1);
     background: -moz-radial-gradient(center, ellipse cover, rgba(255,175,75,1) 0%, rgba(255,146,10,1) 100%);
@@ -34,34 +89,7 @@
             }
             cursor: pointer;
             background: wheat;
-            .activity-stats {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-around;
-                align-items: center;
-                flex-wrap: nowrap;
-                div > p:first-of-type {
-                    font-size: 0.8em;
-                    font-weight: bold;
-                }
-                .activity-rating {
-                    padding-top: 1.4em;
-                    .feedback-count {
-                        margin-top: -1.2em;
-                    }
-                }
 
-                @media all and (max-width: 600px ) {
-                    flex-direction: column;
-                    align-items: stretch;
-                    div  {
-                        text-align: center;
-                        border-top: 1px solid lightgrey;
-                        border-bottom: 1px solid lightgrey;
-                    }
-                }
-
-            }
         }
     }
 }

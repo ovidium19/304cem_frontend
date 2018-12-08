@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Chart from 'chart.js'
 
-class CategoryChart extends React.Component {
+class PieChart extends React.Component {
     randomRgba() {
 
         let o = Math.round, r = Math.random, s = 255
@@ -11,7 +11,7 @@ class CategoryChart extends React.Component {
     }
     createChart() {
         let data = Object.assign({},this.props.data)
-        let elem = document.getElementById('categoryChart')
+        let elem = document.getElementById(this.props.id)
         let color = data.labels.map(l => this.randomRgba())
         data.datasets[0].backgroundColor = color
         console.log(data.datasets[0])
@@ -34,10 +34,10 @@ class CategoryChart extends React.Component {
     }
     render() {
         return (
-            <div className= 'mx-2 category-chart p-2 my-3'>
-                <p className='text-center display-4 text-danger'>Category chart</p>
-                <p className='text-muted mb-2 text-center'>This graph displays the ratio of categories of your results.</p>
-                <canvas id="categoryChart" />
+            <div className= {`mx-2 pie-chart p-1 my-3 ${this.props.klass ? this.props.klass : ''}`}>
+                {this.props.title && <p className='text-center pie-title text-danger'>{this.props.title}</p>}
+                {this.props.description && <p className='text-muted mb-2 text-center'>{this.props.description}</p>}
+                <canvas id={this.props.id} />
                 <React.Fragment>{this.createChart()}</React.Fragment>
 
             </div>
@@ -45,8 +45,12 @@ class CategoryChart extends React.Component {
     }
 }
 
-CategoryChart.propTypes = {
-    data: PropTypes.object.isRequired
+PieChart.propTypes = {
+    data: PropTypes.object.isRequired,
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    klass: PropTypes.string,
 }
 
-export default CategoryChart
+export default PieChart

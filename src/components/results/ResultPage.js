@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux'
 import LoadingIcon from '../common/LoadingIcon'
 import * as resultsActions from '../../actions/resultsActions'
 import ResultStats from './ResultStats'
-import CategoryChart from './CategoryChart'
+import PieChart from './PieChart'
 import ResultList from './ResultList'
 import _ from 'underscore'
 import './ResultPage.less'
@@ -90,7 +90,11 @@ export class ResultPage extends React.Component {
                             passRate = {this.calculatePassRate(this.props.results)}
                             avgTime = {this.calculateAvgTime(this.props.results)} />
 
-                            <CategoryChart data={this.calculateCategoryPercentages(this.props.results)} />
+                            <PieChart
+                            data={this.calculateCategoryPercentages(this.props.results)}
+                            id={'categorychart'}
+                            title={'Category Chart'}
+                            description={'Chart below shows the ratio of categories you chose to play.'}/>
                             <ResultList results = {this.props.results} onClick = {this.onResultClicked} />
 
                     </React.Fragment>

@@ -10,6 +10,9 @@ export default function activity(state=initialState.activity, action){
             console.log(action.data)
             return state
         }
+        case types.GET_ACTIVITY_SUCCESS: {
+            return action.data
+        }
     }
     return state
 }
