@@ -5,9 +5,7 @@ const ActivityText = ({ text, blanks, onClick}) => {
     function replaceTextWithBlanks(text,blanks) {
         let newText = text
         blanks.map(b => {
-            console.log(`replacing -- ${b}`)
             newText = newText.replace(b, `replace-blank^${b}`)
-            console.log(newText)
         })
         return newText
     }

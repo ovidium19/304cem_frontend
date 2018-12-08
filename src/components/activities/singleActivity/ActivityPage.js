@@ -8,7 +8,7 @@ import ActivityStats from '../ActivityStats'
 import * as activityActions from '../../../actions/activityActions'
 import FeedbackList from './feedback/FeedbackList'
 import 'rc-pagination/assets/index.css'
-
+import toastr from 'toastr'
 import _ from 'underscore'
 import PieChart from '../../results/PieChart'
 import LoadingIcon from '../../common/LoadingIcon'
@@ -32,6 +32,7 @@ export class ActivityPage extends React.Component {
         this.onPageSelection = this.onPageSelection.bind(this)
         this.onGoBack = this.onGoBack.bind(this)
         this.onPublish = this.onPublish.bind(this)
+        this.onUpdate = this.onUpdate.bind(this)
     }
 
     componentDidMount() {
@@ -49,7 +50,7 @@ export class ActivityPage extends React.Component {
         }
     }
     componentWillUnmount() {
-        this.props.actions.removeActivity()
+        //this.props.actions.removeActivity()
     }
     calculateAnswerChoices(index) {
         let data = this.props.act.answers
@@ -66,7 +67,6 @@ export class ActivityPage extends React.Component {
              }],
          labels: []
          })
-         console.log(result)
          return result
     }
     onPageSelection(cur,size) {
@@ -83,10 +83,36 @@ export class ActivityPage extends React.Component {
             link: `/app/user/${this.props.user.username}/activities`
         })
     }
+    nextPublishState(activity) {
+        let act = Object.assign({},activity)
+        //not yet fully published
+        if (!(act.published)) act.under_review = !(act.under_review)
+
+        //published
+        else act.published = false
+        return act
+
+
+    }
     onPublish(e) {
         e.preventDefault()
-        console.log(this.props.act.published)
-        console.log(this.props.act.under_review)
+        let newState = this.nextPublishState(this.props.act)
+        this.props.actions.modifyPublishState(this.props.user.header, newState).then(
+            res => {
+                this.setState({
+                    updated: true
+                })
+            }
+        ).catch(err => {
+            toastr.error(err.message)
+        })
+    }
+    onUpdate(e) {
+        e.preventDefault()
+        this.setState({
+            redirect: true,
+            link: `${this.props.location.pathname}/update`
+        })
     }
 
     render() {
@@ -108,6 +134,7 @@ export class ActivityPage extends React.Component {
                         status = {this.props.act.published ? 'Published' : this.props.act.under_review ? 'Under Review' : 'Unpublished'}
                         color = {this.props.act.published ? 'green' : 'red'}
                         onPublish = {this.onPublish}
+                        onUpdate = {this.onUpdate}
                         />
                         <div className='jumbotron activity-item ml-3'>
                             <p className='display-4 text-center'>Stats</p>
@@ -159,6 +186,7 @@ ActivityPage.propTypes = {
     loading: PropTypes.bool,
     actions: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
+    location: PropTypes.object,
     history: PropTypes.object
 }
 function mapStateToProps(state,ownProps) {
@@ -172,7 +200,7 @@ function mapStateToProps(state,ownProps) {
     //reverting feedbacks
     let feedback = JSON.parse(JSON.stringify(state.activity.feedback))
     feedback.reverse()
-    console.log(feedback)
+
     return {
         user,
         act: state.activity,

@@ -14,7 +14,6 @@ class PieChart extends React.Component {
         let elem = document.getElementById(this.props.id)
         let color = data.labels.map(l => this.randomRgba())
         data.datasets[0].backgroundColor = color
-        console.log(data.datasets[0])
         if (elem) {
             let chart = new Chart(
                elem,
@@ -28,6 +27,12 @@ class PieChart extends React.Component {
                         }
                     }
                 })
+        }
+        else {
+            console.log('canvas not found')
+            setTimeout(() => {
+                this.createChart()
+            },200)
         }
 
         return null

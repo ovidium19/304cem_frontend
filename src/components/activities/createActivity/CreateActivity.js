@@ -205,7 +205,8 @@ export class CreateActivity extends React.Component {
                 musicOptions = {this.state.musicOptions}
                 soundOptions = {this.state.soundOptions}
                 colorOptions = {this.state.colorOptions}
-                onAddBlank = {this.onAddBlank} />
+                onAddBlank = {this.onAddBlank}
+                disabled={false}/>
             )
     }
 }

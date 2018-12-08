@@ -13,6 +13,11 @@ export default function activity(state=initialState.activity, action){
         case types.GET_ACTIVITY_SUCCESS: {
             return action.data
         }
+        case types.MODIFY_ACTIVITY_PUBLISH_STATE_SUCCESS:
+        case types.UPDATE_ACTIVITY_SUCCESS:  {
+            console.log('Modified activity')
+            return action.data
+        }
     }
     return state
 }

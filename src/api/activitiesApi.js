@@ -56,3 +56,31 @@ export async function getActivityById(header,id) {
         return res.data[0]
     })
 }
+export async function modifyPublishState(header,act) {
+    return axios({
+        url: `${POST_ACTIVITY}/${act._id}?modifyState=true`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        data: act
+    }).then(res => {
+        console.log(res.data)
+        return act
+    })
+}
+export async function updateActivity(header,act) {
+    return axios({
+        url: `${POST_ACTIVITY}/${act._id}`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        data: act
+    }).then(res => {
+        console.log(res.data)
+        return act
+    })
+}
