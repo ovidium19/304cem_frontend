@@ -84,3 +84,47 @@ export async function updateActivity(header,act) {
         return act
     })
 }
+export async function getReviewActivities(header,options) {
+    return axios({
+        url: `${POST_ACTIVITY}`,
+        baseURL: baseUrl,
+        method: 'GET',
+        headers: {
+            'Authorization': header
+        },
+        params: options
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}
+export async function publishActivity(header,act) {
+    return axios({
+        url: `${POST_ACTIVITY}/${act._id}/publish`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        data: act
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}
+export async function declineActivity(header,id) {
+    return axios({
+        url: `${POST_ACTIVITY}/${id}/publish`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        params: {
+            remove: true
+        }
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}

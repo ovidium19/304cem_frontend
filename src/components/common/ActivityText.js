@@ -10,7 +10,7 @@ const ActivityText = ({ text, blanks, onClick}) => {
         return newText
     }
     return (
-        <h6 className='activity-text'>
+        <h5 className='activity-text'>
             {
                 replaceTextWithBlanks(text,blanks).split(' ').map((word,i) => {
 
@@ -19,7 +19,7 @@ const ActivityText = ({ text, blanks, onClick}) => {
                     : <span key={word+i}> {word} </span>
                 })
             }
-        </h6>
+        </h5>
     )
 }
 

@@ -25,7 +25,7 @@ const UserMenu = ({logged, location, username}) => (
                 </li>
         }
              <li className={`nav-item ${location == '/about' ? 'active' : ''}`}>
-                <NavLink to='/app/about' className='nav-link'>About</NavLink>
+                <NavLink to='/app/review-activities' className='nav-link'>Review</NavLink>
             </li>
         </ul>
     </React.Fragment>
