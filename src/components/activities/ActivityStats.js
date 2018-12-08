@@ -27,7 +27,7 @@ const ActivityStats = ({activity}) => (
         </div>
         <div className='activity-avgtime'>
             <p>Avg Time: </p>
-            <p className='text-success font-weight-bold'>{activity.avg_time ? activity.time + ' sec' : 'No answers'}</p>
+            <p className='text-success font-weight-bold'>{activity.avg_time ? activity.avg_time.toFixed(1) + ' sec' : 'No answers'}</p>
         </div>
     </div>
 )

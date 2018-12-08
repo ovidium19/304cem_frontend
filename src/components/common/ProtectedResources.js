@@ -5,6 +5,8 @@ import PropTypes from 'prop-types'
 import ResultPage from '../results/ResultPage'
 import ActivitiesPage from '../activities/ActivitiesPage'
 import CreateActivity from '../activities/createActivity/CreateActivity'
+import  ActivityPage  from '../activities/singleActivity/ActivityPage'
+import ActivityUpdate from '../activities/singleActivity/ActivityUpdate'
 
 class ProtectedResources extends React.Component {
     constructor(props) {
@@ -39,6 +41,8 @@ class ProtectedResources extends React.Component {
                 <Route exact path={`${this.props.match.path}/user/:username/stats`} component={ResultPage} />
                 <Route exact path={`${this.props.match.path}/user/:username/activities`} component={ActivitiesPage} />
                 <Route exact path={`${this.props.match.path}/activity/create`} component={CreateActivity} />
+                <Route exact path = {`${this.props.match.path}/:username/activity/:id`} component={ActivityPage} />
+                <Route exact path = {`${this.props.match.path}/:username/activity/:id/update`} component={ActivityUpdate} />
 
             </React.Fragment>
         )

@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const TextInputInline = ({name, label, placeholder, onChange, error, value, type, klass, disabled}) => (
-    <div className={`form-group-row ${error && 'has-error'} ${klass}`}>
+const TextInputInline = ({name, label, placeholder, onChange, error, value, type, disabled}) => (
+    <div className={`form-group row ${error && 'has-error'}`}>
         <label className='col-form-label-sm col-4' htmlFor={name+'id'}>{label}</label>
-        <span className='col-2'></span>
+        <span className='col-2' />
         <div className='col-6'>
             <input type={type}
             className={`form-control-sm ${error && 'border-danger'}`}
