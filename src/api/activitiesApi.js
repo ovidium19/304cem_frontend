@@ -128,3 +128,18 @@ export async function declineActivity(header,id) {
         return res.data
     })
 }
+
+export async function getGameActivities(header,params) {
+    return axios({
+        url: `${POST_ACTIVITY}`,
+        baseURL: baseUrl,
+        method: 'GET',
+        headers: {
+            'Authorization': header
+        },
+        params
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}

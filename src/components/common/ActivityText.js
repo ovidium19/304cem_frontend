@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ActivityBlank from './ActivityBlank'
-const ActivityText = ({ text, blanks, onClick}) => {
+const ActivityText = ({ text, blanks, onDrag, klass, showValues}) => {
     function replaceTextWithBlanks(text,blanks) {
         let newText = text
         blanks.map(b => {
@@ -10,22 +10,38 @@ const ActivityText = ({ text, blanks, onClick}) => {
         return newText
     }
     return (
-        <h5 className='activity-text'>
+        <p className={`activity-text ${klass}`}>
             {
                 replaceTextWithBlanks(text,blanks).split(' ').map((word,i) => {
+                    if (/replace-blank\^/.test(word)){
+                        let correctValue = /\^([\w ]+)\b/.exec(word)[1]
+                        let index = blanks.find(b => b == correctValue)
+                        console.log(index)
+                        return (
+                            <ActivityBlank
+                            correctValue = {correctValue}
+                            report={onDrag}
+                            key={word+i}
+                            index = {index}
+                            showValue = {showValues[index]}/>
+                        )
 
-                    return /replace-blank\^/.test(word) ?
-                    <ActivityBlank correctValue = {/\^([\w ]+)$/.exec(word)[1]} onClick={onClick} key={word+i} />
-                    : <span key={word+i}> {word} </span>
+                    }
+                    else {
+                        return  <span key={word+i}> {word} </span>
+                    }
                 })
             }
-        </h5>
+        </p>
     )
 }
 
 ActivityText.propTypes = {
     text: PropTypes.string.isRequired,
     blanks: PropTypes.array.isRequired,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    klass: PropTypes.string,
+    onDrag: PropTypes.func,
+    showValues: PropTypes.array
 }
 export default ActivityText
