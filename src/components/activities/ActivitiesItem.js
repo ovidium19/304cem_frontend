@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ActivityText from '../common/ActivityText'
 import ActivityStats from './ActivityStats'
-const ActivitiesItem = ({ activity, onClick, onBlankClick}) => {
+const ActivitiesItem = ({ activity, onClick}) => {
     function onClickItem(e) {
         e.preventDefault()
         onClick(activity._id)
@@ -18,7 +18,7 @@ const ActivitiesItem = ({ activity, onClick, onBlankClick}) => {
 
             </div>
             <div className='px-2 pb-2'>
-                <ActivityText text={activity.text} blanks={activity.blanks} onClick={onBlankClick} />
+                <ActivityText text={activity.text} blanks={activity.blanks} />
             </div>
             <ActivityStats activity={activity} />
         </li>

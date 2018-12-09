@@ -6,7 +6,7 @@ import {DropTarget} from 'react-dnd'
 const dropTarget = {
     drop(props,monitor) {
         let elem = monitor.getItem()
-        props.report(elem.text,props.index)
+        props.report(elem.text,props.index, props.showValue)
     }
 }
 function collect(connect, monitor) {
@@ -15,10 +15,18 @@ function collect(connect, monitor) {
       isOver: monitor.isOver()
     };
   }
-const ActivityBlank = ({correctValue, showValue, report, index, connectDropTarget, isOver}) => {
+export const ActivityBlank = ({correctValue, showValue, report, index, connectDropTarget, isOver}) => {
+    console.log(showValue)
+    if (showValue==undefined) {
+        return (
+            <span className='activity-blank' style={{background: isOver ? 'green' : 'inherit'}}>
+            { '_'.repeat(correctValue.length) }
+            </span>
+        )
+    }
     return connectDropTarget(
         <span className='activity-blank' style={{background: isOver ? 'green' : 'inherit'}}>
-            { showValue ? showValue : '_'.repeat(correctValue.length) }
+            { showValue && showValue.length > 0 ? showValue : '_'.repeat(correctValue.length) }
         </span>
     )
 }
@@ -26,4 +34,4 @@ ActivityBlank.propTypes = {
     correctValue: PropTypes.string.isRequired,
 }
 
-export default DropTarget(types.OPTION, dropTarget, collect)(ActivityBlank)
+export const ActivityBlankConnected =  DropTarget(types.OPTION, dropTarget, collect)(ActivityBlank)

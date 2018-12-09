@@ -29,6 +29,7 @@ export class PlayGame extends React.Component {
             gameState: 'Setting up',
             showValues: [],
             currentQuestion: -1,
+            currentOptions: [],
             score: 0,
             redirect: false,
             link: '',
@@ -41,12 +42,16 @@ export class PlayGame extends React.Component {
         this.renderState = this.renderState.bind(this)
         this.getOptions = this.getOptions.bind(this)
         this.onDragAnswerToBlank = this.onDragAnswerToBlank.bind(this)
+        this.advanceState = this.advanceState.bind(this)
     }
 
     componentDidMount() {
 
     }
     componentWillUnmount() {
+        this.setState({
+            gameState: 'finished'
+        })
         this.props.actions.stopGame()
     }
     onChange(event) {
@@ -76,27 +81,61 @@ export class PlayGame extends React.Component {
         this.props.actions.getGameActivities(this.props.user.header,params)
             .then(res => {
                 console.log(res)
-                this.setState({
-                    gameState:'Show Question',
-                    currentQuestion: this.state.currentQuestion + 1,
-                    showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => '')
-                })
+                this.setStateToNextQuestion()
             }).catch(err => {
                 toastr.error(err.message)
             })
     }
-    getOptions() {
-        let options = _.flatten(this.props.activities[this.state.currentQuestion].options)
+    getOptions(index) {
+        let options = _.flatten(this.props.activities[index].options)
         return _.shuffle(options)
 
     }
-    onDragAnswerToBlank(value,index) {
+    setStateToNextQuestion() {
+        console.log('Setting state to next question')
+        this.setState({
+            gameState: 'Loading'
+        })
+        setTimeout(() => {
+            this.setState({
+                gameState:'Show Question',
+                currentQuestion: this.state.currentQuestion + 1,
+                showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => ''),
+                currentOptions: this.getOptions(this.state.currentQuestion+1)
+            })
+
+        }, 500)
+
+    }
+    onDragAnswerToBlank(value,index,cur) {
         console.log(value, index)
         let state =  Array.from(this.state.showValues)
         state[index] = value
+        let options = Array.from(this.state.currentOptions)
+        if (cur) {
+            let ind = options.findIndex(c => c == value)
+            options.splice(ind,1,cur)
+        }
         this.setState({
-            showValues: state
+            showValues: state,
+            currentOptions: options
         })
+    }
+    calculateScore() {
+        let choices = this.state.showValues
+        let passed = this.props.activities[this.state.currentQuestion].blanks.reduce((p,c,i) => p && c == choices[i], true)
+        console.log(`User has passed : ${passed}`)
+        this.setState({
+            score: passed ? this.state.score + 20 : this.state.score
+        })
+    }
+    advanceState() {
+        this.calculateScore()
+        //this.postAnswer()
+        if (this.state.currentQuestion < this.props.activities.length-1) {
+            this.setStateToNextQuestion()
+        }
+
     }
     renderState() {
         switch ( this.state.gameState) {
@@ -122,6 +161,10 @@ export class PlayGame extends React.Component {
                     <div
                     className='d-flex justify-content-space-between align-items-center flex-nowrap flex-column play-activity m-0 p-0'
                     style={this.props.activities[this.state.currentQuestion].styles}>
+                    <div className='align-self-stretch mt-2'>
+                        <button className='btn btn-success float-right mx-2' onClick={this.advanceState}>Advance</button>
+                    </div>
+
                         <ActivityText
                         text = {this.props.activities[this.state.currentQuestion].text}
                         blanks = {this.props.activities[this.state.currentQuestion].blanks}
@@ -130,7 +173,7 @@ export class PlayGame extends React.Component {
                         onDrag = {this.onDragAnswerToBlank}
                         />
                         <ActivityOptions
-                        options = {this.getOptions()}
+                        options = {this.state.currentOptions}
                         />
                     </div>
                 )

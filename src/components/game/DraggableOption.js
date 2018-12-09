@@ -17,10 +17,8 @@ function collect(connect, monitor) {
     }
 }
 const DraggableOption = ({option, connectDragSource, isDragging}) => {
-    let id = option.replace(/ /g, '')
-    console.log(id)
     return connectDragSource(
-        <div className='btn btn-dark text-white option' style={{opacity: isDragging ? 0.75 : 1}} id={id}>{option}</div>
+        <div className='btn btn-dark text-white option' style={{opacity: isDragging ? 0.75 : 1}} id={option}>{option}</div>
     )
 }
 
