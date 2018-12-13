@@ -94,6 +94,14 @@
     }
 
     .activities-list {
+        .review-activity-item {
+            @media all and (max-width: 700px ) {
+                 h5 {
+                    clear: both;
+                    font-size: 1rem;
+                }
+            }
+        }
         .activity-item {
             &:hover {
                 background: lighten(rgba(255,175,75,1),10%);

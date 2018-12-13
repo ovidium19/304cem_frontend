@@ -21,6 +21,10 @@ export default {
         feedback: [],
         answers: []
     },
+    game: {
+        activities: [],
+        answers: []
+    },
     results: [],
     asyncCalls: 0,
     user: {

@@ -17,6 +17,15 @@ export function modifyPublishStateSuccess(data) {
 export function updateActivitySuccess(data) {
     return {type: types.UPDATE_ACTIVITY_SUCCESS, data}
 }
+export function getReviewActivitiesSuccess(data) {
+    return {type: types.GET_REVIEW_ACTIVITIES_SUCCESS, data}
+}
+export function publishActivitySuccess(data) {
+    return {type: types.PUBLISH_ACTIVITY_SUCCESS, data}
+}
+export function declineActivitySuccess(data) {
+    return {type: types.DECLINE_ACTIVITY_SUCCESS, data}
+}
 export function removeActivities() {
     return {type: types.REMOVE_ACTIVITIES}
 }
@@ -73,6 +82,39 @@ export function updateActivity(header,act) {
         dispatch(beginAsyncOp())
         return actDb.updateActivity(header,act).then(res => {
             dispatch(updateActivitySuccess(res))
+        }).catch(err => {
+            dispatch(asyncError(err))
+            throw(err)
+        })
+    }
+}
+export function getReviewActivities(header, options) {
+    return (dispatch, getState) => {
+        dispatch(beginAsyncOp())
+        return actDb.getReviewActivities(header,options).then(res => {
+            dispatch(getReviewActivitiesSuccess(res))
+        }).catch(err => {
+            dispatch(asyncError(err))
+            throw(err)
+        })
+    }
+}
+export function publishActivity(header,act) {
+    return (dispatch, getState) => {
+        dispatch(beginAsyncOp())
+        return actDb.publishActivity(header,act).then(res => {
+            dispatch(publishActivitySuccess(res))
+        }).catch(err => {
+            dispatch(asyncError(err))
+            throw(err)
+        })
+    }
+}
+export function declineActivity(header,id) {
+    return (dispatch, getState) => {
+        dispatch(beginAsyncOp())
+        return actDb.declineActivity(header,id).then(res => {
+            dispatch(declineActivitySuccess(res))
         }).catch(err => {
             dispatch(asyncError(err))
             throw(err)

@@ -6,6 +6,9 @@ export default function results(state=initialState.userActivities, action){
         case types.GET_ACTIVITIES_SUCCESS: {
             return action.data
         }
+        case types.GET_REVIEW_ACTIVITIES_SUCCESS: {
+            return action.data
+        }
         case types.REMOVE_ACTIVITIES: {
             return {
                 count: 0,

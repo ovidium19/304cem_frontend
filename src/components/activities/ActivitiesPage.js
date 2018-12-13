@@ -6,6 +6,7 @@ import {bindActionCreators} from 'redux'
 import LoadingIcon from '../common/LoadingIcon'
 import * as activityActions from '../../actions/activityActions'
 import ActivitiesList from './ActivitiesList'
+import ActivitiesItem from './ActivitiesItem'
 import ActivityFilters from './ActivityFilters'
 import categories from '../common/categories'
 import Pagination from 'rc-pagination'
@@ -187,7 +188,8 @@ export class ActivitiesPage extends React.Component {
                                 <ActivitiesList activities={this.props.activities}
                                 onClick={this.onActivityClicked}
                                 onBlankClick={this.onBlankClicked}
-                                klass={'card-body m-0 p-0'} />
+                                klass={'card-body m-0 p-0'}
+                                Item = {ActivitiesItem} />
                                 :
                                 <div className='d-flex justify-content-center align-items-center flex-column'>
                                     <p className='lead mb-2'>You have no activities created that match the filters above.

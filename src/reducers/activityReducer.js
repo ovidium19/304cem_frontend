@@ -18,6 +18,14 @@ export default function activity(state=initialState.activity, action){
             console.log('Modified activity')
             return action.data
         }
+        case types.PUBLISH_ACTIVITY_SUCCESS: {
+            console.log('Published')
+            return state
+        }
+        case types.DECLINE_ACTIVITY_SUCCESS: {
+            console.log('Declined')
+            return state
+        }
     }
     return state
 }
