@@ -143,3 +143,17 @@ export async function getGameActivities(header,params) {
         return res.data
     })
 }
+export async function postAnswer(header,id,data) {
+    return axios({
+        url: `${POST_ACTIVITY}/${id}/answer`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        data
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}

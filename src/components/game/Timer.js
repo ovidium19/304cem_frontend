@@ -38,4 +38,4 @@ Timer.propTypes = {
     callback: PropTypes.func
 }
 
-export default Timer;
+export default Timer

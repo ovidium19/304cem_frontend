@@ -37,7 +37,6 @@ export class PlayGame extends React.Component {
             updated: false,
             categoryOptions: categories,
             time: [],
-            answers: [],
             maxTime: 30,
             currentTime: 0
 
@@ -107,11 +106,28 @@ export class PlayGame extends React.Component {
             }
         })
     }
-    setStateToNextQuestion() {
-        console.log('Setting state to next question')
-        this.setState({
-            gameState: 'Loading'
+    saveAnswer() {
+        let question = this.props.activities[this.state.currentQuestion]
+        let correctEach = []
+        question.blanks.map((b,i) => {
+            correctEach.push({
+                correct: b == this.state.showValues[i] ? 1 : 0,
+                answer: this.state.showValues[i]
+            })
         })
+        let correctAll = correctEach.reduce((p,c) => p && c.correct, 1)
+        let answer = {
+            username: question.allow_anon ? "" : this.props.user.username,
+            allow_anon: question.allow_anon,
+            time: this.state.currentTime,
+            correctAll,
+            correctEach,
+            finished: true
+        }
+        this.props.actions.pushAnswer(answer)
+        return this.props.actions.postAnswer(this.props.user.header,question._id,answer)
+    }
+    goToNextQuestion() {
         setTimeout(() => {
             this.setState({
                 gameState:'Show Question',
@@ -123,6 +139,20 @@ export class PlayGame extends React.Component {
             })
 
         }, 500)
+
+    }
+    setStateToNextQuestion() {
+        console.log('Setting state to next question')
+        this.setState({
+            gameState: 'Loading'
+        })
+        if (this.state.currentQuestion >= 0)
+            this.saveAnswer().then(res => {
+                this.goToNextQuestion()
+            })
+        else {
+            this.goToNextQuestion()
+        }
 
     }
     onDragAnswerToBlank(value,index,cur) {
