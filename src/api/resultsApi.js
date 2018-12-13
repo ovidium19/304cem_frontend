@@ -19,3 +19,16 @@ export async function getResults(header) {
         return res.data
     })
 }
+export async function getResultsStats(header, params) {
+    return axios({
+        url: GET_RESULTS_URL,
+        baseURL: baseUrl,
+        method: 'GET',
+        headers: {
+            'Authorization': header
+        },
+        params
+    }).then(res => {
+        return res.data
+    })
+}

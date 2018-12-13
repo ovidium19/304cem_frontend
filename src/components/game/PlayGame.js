@@ -17,6 +17,7 @@ import './Game.less'
 import LoadingSpinner from '../common/LoadingSpinner'
 import ActivityOptions from './ActivityOptions'
 import Timer from './Timer'
+import ResultScreen from './ResultScreen'
 
 export class PlayGame extends React.Component {
     constructor(props) {
@@ -38,7 +39,8 @@ export class PlayGame extends React.Component {
             categoryOptions: categories,
             time: [],
             maxTime: 30,
-            currentTime: 0
+            currentTime: 0,
+            start_time: null
 
         }
         this.onChange = this.onChange.bind(this)
@@ -128,17 +130,50 @@ export class PlayGame extends React.Component {
         return this.props.actions.postAnswer(this.props.user.header,question._id,answer)
     }
     goToNextQuestion() {
+        let gameState = 'Show Question'
+        if (this.state.currentQuestion == this.props.activities.length - 1) {
+            gameState = 'Results'
+        }
         setTimeout(() => {
-            this.setState({
-                gameState:'Show Question',
-                currentQuestion: this.state.currentQuestion + 1,
-                showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => ''),
-                currentOptions: this.getOptions(this.state.currentQuestion+1),
-                time: this.state.currentTime > 0 ? [...this.state.time, this.state.currentTime] : [...this.state.time],
-                currentTime: 0
-            })
+            if (gameState == 'Results') {
+                this.postResultsAndShow()
+            }
+            else{
+                this.setState({
+                    gameState,
+                    currentQuestion: this.state.currentQuestion + 1,
+                    showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => ''),
+                    currentOptions: this.getOptions(this.state.currentQuestion+1),
+                    time: this.state.currentTime > 0 ? [...this.state.time, this.state.currentTime] : [...this.state.time],
+                    currentTime: 0
+                })
 
+            }
         }, 500)
+
+
+    }
+    postResultsAndShow() {
+        //format results to include question id
+        let results = {}
+        results.answers = JSON.parse(JSON.stringify(this.props.answers))
+        results.username = this.props.user.username
+        results.category = this.state.params.category
+        results.timestamp = this.state.start_time
+        results.answers = results.answers.map((r,i) => {
+            let {username, allow_anon, finished, ...res} = r
+            res.question_id = this.props.activities[i]._id
+            return res
+        })
+        results.passed = this.state.score >= 60 ? 1 : 0
+        console.log(results)
+        this.props.actions.postResults(this.props.user.header,results)
+            .then(res => {
+                console.log(res)
+                this.setState({
+                    gameState: 'Results'
+                })
+            })
 
     }
     setStateToNextQuestion() {
@@ -151,7 +186,11 @@ export class PlayGame extends React.Component {
                 this.goToNextQuestion()
             })
         else {
-            this.goToNextQuestion()
+            this.setState({
+                start_time: new Date(Date.now())
+            }, () => {
+                this.goToNextQuestion()
+            })
         }
 
     }
@@ -179,10 +218,7 @@ export class PlayGame extends React.Component {
     }
     advanceState() {
         this.calculateScore()
-        //this.postAnswer()
-        if (this.state.currentQuestion < this.props.activities.length-1) {
-            this.setStateToNextQuestion()
-        }
+        this.setStateToNextQuestion()
 
     }
     renderState() {
@@ -228,6 +264,16 @@ export class PlayGame extends React.Component {
                     </div>
                 )
             }
+            case 'Results': {
+                return (
+                    <ResultScreen
+                    answers = {this.props.answers}
+                    activities = {this.props.activities}
+                    username = {this.props.user.username}
+                    score = {this.state.score}
+                    />
+                )
+            }
             default: {
                 return null
             }
@@ -253,6 +299,7 @@ export class PlayGame extends React.Component {
 PlayGame.propTypes = {
     user: PropTypes.object.isRequired,
     activities: PropTypes.array.isRequired,
+    answers: PropTypes.array.isRequired,
     actions: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     history: PropTypes.object

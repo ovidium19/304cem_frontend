@@ -25,7 +25,12 @@ export default {
         activities: [],
         answers: []
     },
-    results: [],
+    results: {
+        count: 0,
+        data: [],
+        passrate: 0,
+        avg_time: 0
+    },
     asyncCalls: 0,
     user: {
         username: '',

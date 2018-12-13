@@ -20,8 +20,6 @@ export class ResultPage extends React.Component {
                 page: 1,
                 limit: 6
             },
-            avgTime: 0,
-            passRate: 0,
             categoryData: [],
             categories: [],
             updated: false
@@ -31,15 +29,19 @@ export class ResultPage extends React.Component {
 
     componentDidMount() {
         if (this.props.results.length == 0 && this.state.updated == false) {
+            this.props.actions.getResultsStats(this.props.user.header,{stats: true}).then(res => {
+                this.props.actions.getResults(this.props.user.header).then(
+                    res => {
 
-            this.props.actions.getResults(this.props.user.header).then(
-                res => {
-
-                    this.setState({
-                        updated: true
+                        this.setState({
+                            updated: true
+                        })
+                    }).catch(err => {
                     })
-                }).catch(err => {
-                })
+            }).catch(err => {
+                console.log(err)
+                throw(err)
+            })
         }
     }
     componentWillUnmount() {
@@ -50,13 +52,6 @@ export class ResultPage extends React.Component {
         let id = event.target.attributes.courseid.nodeValue
         this.props.actions.setActiveCourse(id)
         this.props.history.push(`/course/${id}`)
-    }
-    calculatePassRate(data) {
-        console.log(data)
-        return Math.floor(data.reduce((p,c,i) => c.passed == 1 ? p + 1 : p ,0) / data.length) * 100
-    }
-    calculateAvgTime(data) {
-        return data.reduce((p,c,i) => Math.floor(p + c.total_time / data.length), 0)
     }
     calculateCategoryPercentages(data) {
         let obj = _.countBy(data,(d) => d.category)
@@ -87,8 +82,8 @@ export class ResultPage extends React.Component {
                 this.props.results.length > 0 ?
                     <React.Fragment>
                             <ResultStats
-                            passRate = {this.calculatePassRate(this.props.results)}
-                            avgTime = {this.calculateAvgTime(this.props.results)} />
+                            passRate = {Math.round(this.props.passrate * 100)}
+                            avgTime = {Math.round(this.props.avgTime)} />
 
                             <PieChart
                             data={this.calculateCategoryPercentages(this.props.results)}
@@ -110,6 +105,8 @@ export class ResultPage extends React.Component {
 ResultPage.propTypes = {
     user: PropTypes.object.isRequired,
     results: PropTypes.array.isRequired,
+    avgTime: PropTypes.number,
+    passrate: PropTypes.number,
     actions: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     history: PropTypes.object
@@ -125,7 +122,10 @@ function mapStateToProps(state,ownProps) {
 
     return {
         user,
-        results: state.results,
+        results: state.results.data,
+        avgTime: state.results.avg_time,
+        passrate: state.results.passrate,
+        count: state.results.count,
         loading: state.asyncCalls > 0
     }
 }
