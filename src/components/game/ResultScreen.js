@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {Link} from 'react-router-dom'
+import FeedbackSection from './FeedbackSection'
 
-const ResultScreen = ({onRate, onFeedbackSend, answers, activities, username, score }) => {
+const ResultScreen = ({onFeedbackSend, answers, activities, username, score }) => {
     let result = score >= 60
     let message
     let hint
@@ -50,36 +51,46 @@ const ResultScreen = ({onRate, onFeedbackSend, answers, activities, username, sc
             <div className='my-3 p-2'>
                 <ul className='list-group p-0'>
                     { answers && answers.map( (a,i) => (
-                        <li className='list-group-item px-2 activity-item' key={i} style={{
-                            backgroundColor: activities[i].styles.backgroundColor
-                        }}>
-                            <div className='my-2'  style={{color: activities[i].styles.color}}>
+                        <li className='list-group-item p-0 m-0 activity-item' key={i}>
+                            <div className='my-2 card card-body'  style={
+                                {color: activities[i].styles.color,
+                                 backgroundColor: activities[i].styles.backgroundColor
+                                }}>
                                 <p>
                                     <span className='mr-2 lead'>Text: </span>
                                     {activities[i].text}
                                 </p>
+                                <div className='card-footer m-0 mb-1 bg-white text-dark'>
+                                    <div className=' font-weight-bold'>
+                                        <p>
+                                            <span className='mr-2 '>Time: </span>
+                                            {a.time} seconds
+                                        </p>
 
-                            </div>
-                            <div className='my-2 font-weight-bold text-white'>
-                                <p>
-                                    <span className='mr-2 '>Time: </span>
-                                    {a.time} seconds
-                                </p>
+                                    </div>
 
-                            </div>
-                            <div className='my-2 font-weight-bold'>
-                                <div>
-                                    <span className='mr-2 lead'>Your answers: </span>
-                                    <ul className='list-inline'>
-                                        {a.correctEach.map((c,j) => (
-                                            <li
-                                            className={`list-inline-item ${c.correct ? 'text-success' : 'text-warning'}`}
-                                            key={`answer${i}${j}`}>
-                                                {c.answer ? c.answer : 'No answer'}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    <div className='my-2 font-weight-bold'>
+                                        <div>
+                                            <span className='mr-2 lead'>Your answers: </span>
+                                            <ul className='list-inline'>
+                                                {a.correctEach.map((c,j) => (
+                                                    <li
+                                                    className={`list-inline-item ${c.correct ? 'text-success' : 'text-warning'}`}
+                                                    key={`answer${i}${j}`}>
+                                                        {c.answer ? c.answer : 'No answer'}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div className='feedback card-footer'>
+                                        <FeedbackSection
+                                        onFeedbackSend = {onFeedbackSend}
+                                        id={activities[i]._id} />
+                                    </div>
+
                                 </div>
+
                             </div>
                         </li>
                     ))}
