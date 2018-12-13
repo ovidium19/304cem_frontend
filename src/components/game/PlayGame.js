@@ -16,6 +16,7 @@ import SetupScreen from './SetupScreen'
 import './Game.less'
 import LoadingSpinner from '../common/LoadingSpinner'
 import ActivityOptions from './ActivityOptions'
+import Timer from './Timer'
 
 export class PlayGame extends React.Component {
     constructor(props) {
@@ -34,7 +35,11 @@ export class PlayGame extends React.Component {
             redirect: false,
             link: '',
             updated: false,
-            categoryOptions: categories
+            categoryOptions: categories,
+            time: [],
+            answers: [],
+            maxTime: 30,
+            currentTime: 0
 
         }
         this.onChange = this.onChange.bind(this)
@@ -43,6 +48,7 @@ export class PlayGame extends React.Component {
         this.getOptions = this.getOptions.bind(this)
         this.onDragAnswerToBlank = this.onDragAnswerToBlank.bind(this)
         this.advanceState = this.advanceState.bind(this)
+        this.timerCallback = this.timerCallback.bind(this)
     }
 
     componentDidMount() {
@@ -91,6 +97,16 @@ export class PlayGame extends React.Component {
         return _.shuffle(options)
 
     }
+    timerCallback() {
+
+        this.setState({
+            currentTime: this.state.currentTime + 1
+        }, () => {
+            if (this.state.currentTime == this.state.maxTime) {
+                this.advanceState()
+            }
+        })
+    }
     setStateToNextQuestion() {
         console.log('Setting state to next question')
         this.setState({
@@ -101,7 +117,9 @@ export class PlayGame extends React.Component {
                 gameState:'Show Question',
                 currentQuestion: this.state.currentQuestion + 1,
                 showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => ''),
-                currentOptions: this.getOptions(this.state.currentQuestion+1)
+                currentOptions: this.getOptions(this.state.currentQuestion+1),
+                time: this.state.currentTime > 0 ? [...this.state.time, this.state.currentTime] : [...this.state.time],
+                currentTime: 0
             })
 
         }, 500)
@@ -163,6 +181,8 @@ export class PlayGame extends React.Component {
                     style={this.props.activities[this.state.currentQuestion].styles}>
                     <div className='align-self-stretch mt-2'>
                         <button className='btn btn-success float-right mx-2' onClick={this.advanceState}>Advance</button>
+                        <Timer displayTime = {this.state.maxTime - this.state.currentTime} callback = {this.timerCallback} />
+
                     </div>
 
                         <ActivityText
