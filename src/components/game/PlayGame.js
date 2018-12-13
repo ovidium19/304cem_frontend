@@ -40,7 +40,8 @@ export class PlayGame extends React.Component {
             time: [],
             maxTime: 30,
             currentTime: 0,
-            start_time: null
+            start_time: null,
+            feedbackStatus: []
 
         }
         this.onChange = this.onChange.bind(this)
@@ -50,6 +51,7 @@ export class PlayGame extends React.Component {
         this.onDragAnswerToBlank = this.onDragAnswerToBlank.bind(this)
         this.advanceState = this.advanceState.bind(this)
         this.timerCallback = this.timerCallback.bind(this)
+        this.onFeedbackSend = this.onFeedbackSend.bind(this)
     }
 
     componentDidMount() {
@@ -107,6 +109,31 @@ export class PlayGame extends React.Component {
                 this.advanceState()
             }
         })
+    }
+    onFeedbackSend(feedback,index) {
+        console.log(feedback)
+        console.log(index)
+        console.log(this.state.feedbackStatus[index])
+        let ff = Array.from(this.state.feedbackStatus)
+        ff[index] = "Loading"
+        this.setState({
+            feedbackStatus: ff
+        })
+        let id = this.props.activities[index]._id
+        let username = this.props.activities[index].allow_anon ? '' : this.props.user.username
+        let refactoredFeedback = Object.assign({},feedback,{username})
+        this.props.actions.sendFeedback(this.props.user.header ,id,refactoredFeedback)
+            .then(res => {
+                let ff = Array.from(this.state.feedbackStatus)
+                ff[index] = "Sent"
+                this.setState({
+                    feedbackStatus: ff
+                })
+            })
+            .catch(err => {
+                console.log(err)
+                throw(err)
+            })
     }
     saveAnswer() {
         let question = this.props.activities[this.state.currentQuestion]
@@ -187,7 +214,8 @@ export class PlayGame extends React.Component {
             })
         else {
             this.setState({
-                start_time: new Date(Date.now())
+                start_time: new Date(Date.now()),
+                feedbackStatus: Array.from(this.props.activities, a => a.allow_feedback ? 'Available' : 'Not Available')
             }, () => {
                 this.goToNextQuestion()
             })
@@ -271,6 +299,8 @@ export class PlayGame extends React.Component {
                     activities = {this.props.activities}
                     username = {this.props.user.username}
                     score = {this.state.score}
+                    onFeedbackSend = {this.onFeedbackSend}
+                    feedbackStatus = {this.state.feedbackStatus}
                     />
                 )
             }

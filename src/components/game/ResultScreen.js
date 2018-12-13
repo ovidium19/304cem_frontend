@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {Link} from 'react-router-dom'
 import FeedbackSection from './FeedbackSection'
 
-const ResultScreen = ({onFeedbackSend, answers, activities, username, score }) => {
+const ResultScreen = ({onFeedbackSend, answers, activities, username, score, feedbackStatus }) => {
     let result = score >= 60
     let message
     let hint
@@ -86,7 +86,8 @@ const ResultScreen = ({onFeedbackSend, answers, activities, username, score }) =
                                     <div className='feedback card-footer'>
                                         <FeedbackSection
                                         onFeedbackSend = {onFeedbackSend}
-                                        id={activities[i]._id} />
+                                        index={i}
+                                        feedbackStatus = {feedbackStatus[i]}/>
                                     </div>
 
                                 </div>

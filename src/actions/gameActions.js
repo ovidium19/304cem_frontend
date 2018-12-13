@@ -11,7 +11,9 @@ export function postAnswerSuccess(data) {
 export function postResultsSuccess(data) {
     return {type: types.POST_RESULTS_SUCCESS, data}
 }
-
+export function postFeedbackSuccess(data) {
+    return {type: types.POST_FEEDBACK_SUCCESS, data}
+}
 export function pushAnswer(answer) {
     return {type: types.PUSH_ANSWER, answer}
 }
@@ -43,6 +45,18 @@ export function postResults(header,results) {
         dispatch(beginAsyncOp())
         return actDb.postResults(header,results).then(res => {
             dispatch(postResultsSuccess(res))
+        }).catch(err => {
+            dispatch(asyncError(err))
+            throw(err)
+        })
+    }
+
+}
+export function sendFeedback(header,id, data) {
+    return (dispatch, getState) => {
+        dispatch(beginAsyncOp())
+        return actDb.sendFeedback(header,id, data).then(res => {
+            dispatch(postFeedbackSuccess(res))
         }).catch(err => {
             dispatch(asyncError(err))
             throw(err)

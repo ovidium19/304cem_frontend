@@ -17,6 +17,9 @@ export default function game(state=initialState.game, action){
         case types.STOP_GAME: {
             return initialState.game
         }
+        case types.POST_FEEDBACK_SUCCESS: {
+            return state
+        }
     }
     return state
 }
