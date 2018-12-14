@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as ct from '../constants'
 
 const baseUrl = ct.BASE_URL
+const RESULTS_URL = '/api/v1/results'
 const GET_USER_ACTIVITIES_URL = '/api/v1/activities/for'
 const POST_ACTIVITY = '/api/v1/activities'
 function generateAuthHeader(credentials){
@@ -138,6 +139,48 @@ export async function getGameActivities(header,params) {
             'Authorization': header
         },
         params
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}
+export async function postAnswer(header,id,data) {
+    return axios({
+        url: `${POST_ACTIVITY}/${id}/answer`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        data
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}
+export async function postResults(header,data) {
+    return axios({
+        url: RESULTS_URL,
+        baseURL: baseUrl,
+        method: 'POST',
+        headers: {
+            'Authorization': header
+        },
+        data
+    }).then(res => {
+        console.log(res.data)
+        return res.data
+    })
+}
+export async function sendFeedback(header,id,data) {
+    return axios({
+        url: `${POST_ACTIVITY}/${id}/feedback`,
+        baseURL: baseUrl,
+        method: 'PUT',
+        headers: {
+            'Authorization': header
+        },
+        data
     }).then(res => {
         console.log(res.data)
         return res.data

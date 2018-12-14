@@ -4,7 +4,7 @@
   "description": "304CEM Front End - Fill in Blanks project by Ovidiu Mitroi",
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all --parallel  open:src lint:watch test:watch",
+    "start": "npm run open:src",
     "open:src": "babel-node tools/server.js",
     "lint": "node_modules/.bin/esw webpack.config.* src tools",
     "lint:watch": "npm run lint -- --watch",

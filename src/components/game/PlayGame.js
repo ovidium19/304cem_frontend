@@ -16,6 +16,8 @@ import SetupScreen from './SetupScreen'
 import './Game.less'
 import LoadingSpinner from '../common/LoadingSpinner'
 import ActivityOptions from './ActivityOptions'
+import Timer from './Timer'
+import ResultScreen from './ResultScreen'
 
 export class PlayGame extends React.Component {
     constructor(props) {
@@ -34,7 +36,12 @@ export class PlayGame extends React.Component {
             redirect: false,
             link: '',
             updated: false,
-            categoryOptions: categories
+            categoryOptions: categories,
+            time: [],
+            maxTime: 30,
+            currentTime: 0,
+            start_time: null,
+            feedbackStatus: []
 
         }
         this.onChange = this.onChange.bind(this)
@@ -43,6 +50,8 @@ export class PlayGame extends React.Component {
         this.getOptions = this.getOptions.bind(this)
         this.onDragAnswerToBlank = this.onDragAnswerToBlank.bind(this)
         this.advanceState = this.advanceState.bind(this)
+        this.timerCallback = this.timerCallback.bind(this)
+        this.onFeedbackSend = this.onFeedbackSend.bind(this)
     }
 
     componentDidMount() {
@@ -91,20 +100,126 @@ export class PlayGame extends React.Component {
         return _.shuffle(options)
 
     }
+    timerCallback() {
+
+        this.setState({
+            currentTime: this.state.currentTime + 1
+        }, () => {
+            if (this.state.currentTime == this.state.maxTime) {
+                this.advanceState()
+            }
+        })
+    }
+    onFeedbackSend(feedback,index) {
+        console.log(feedback)
+        console.log(index)
+        console.log(this.state.feedbackStatus[index])
+        let ff = Array.from(this.state.feedbackStatus)
+        ff[index] = "Loading"
+        this.setState({
+            feedbackStatus: ff
+        })
+        let id = this.props.activities[index]._id
+        let username = this.props.activities[index].allow_anon ? '' : this.props.user.username
+        let refactoredFeedback = Object.assign({},feedback,{username})
+        this.props.actions.sendFeedback(this.props.user.header ,id,refactoredFeedback)
+            .then(res => {
+                let ff = Array.from(this.state.feedbackStatus)
+                ff[index] = "Sent"
+                this.setState({
+                    feedbackStatus: ff
+                })
+            })
+            .catch(err => {
+                console.log(err)
+                throw(err)
+            })
+    }
+    saveAnswer() {
+        let question = this.props.activities[this.state.currentQuestion]
+        let correctEach = []
+        question.blanks.map((b,i) => {
+            correctEach.push({
+                correct: b == this.state.showValues[i] ? 1 : 0,
+                answer: this.state.showValues[i]
+            })
+        })
+        let correctAll = correctEach.reduce((p,c) => p && c.correct, 1)
+        let answer = {
+            username: question.allow_anon ? "" : this.props.user.username,
+            allow_anon: question.allow_anon,
+            time: this.state.currentTime,
+            correctAll,
+            correctEach,
+            finished: true
+        }
+        this.props.actions.pushAnswer(answer)
+        return this.props.actions.postAnswer(this.props.user.header,question._id,answer)
+    }
+    goToNextQuestion() {
+        let gameState = 'Show Question'
+        if (this.state.currentQuestion == this.props.activities.length - 1) {
+            gameState = 'Results'
+        }
+        setTimeout(() => {
+            if (gameState == 'Results') {
+                this.postResultsAndShow()
+            }
+            else{
+                this.setState({
+                    gameState,
+                    currentQuestion: this.state.currentQuestion + 1,
+                    showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => ''),
+                    currentOptions: this.getOptions(this.state.currentQuestion+1),
+                    time: this.state.currentTime > 0 ? [...this.state.time, this.state.currentTime] : [...this.state.time],
+                    currentTime: 0
+                })
+
+            }
+        }, 500)
+
+
+    }
+    postResultsAndShow() {
+        //format results to include question id
+        let results = {}
+        results.answers = JSON.parse(JSON.stringify(this.props.answers))
+        results.username = this.props.user.username
+        results.category = this.state.params.category
+        results.timestamp = this.state.start_time
+        results.answers = results.answers.map((r,i) => {
+            let {username, allow_anon, finished, ...res} = r
+            res.question_id = this.props.activities[i]._id
+            return res
+        })
+        results.passed = this.state.score >= 60 ? 1 : 0
+        console.log(results)
+        this.props.actions.postResults(this.props.user.header,results)
+            .then(res => {
+                console.log(res)
+                this.setState({
+                    gameState: 'Results'
+                })
+            })
+
+    }
     setStateToNextQuestion() {
         console.log('Setting state to next question')
         this.setState({
             gameState: 'Loading'
         })
-        setTimeout(() => {
-            this.setState({
-                gameState:'Show Question',
-                currentQuestion: this.state.currentQuestion + 1,
-                showValues: Array.from(this.props.activities[this.state.currentQuestion+1].blanks, a => ''),
-                currentOptions: this.getOptions(this.state.currentQuestion+1)
+        if (this.state.currentQuestion >= 0)
+            this.saveAnswer().then(res => {
+                this.goToNextQuestion()
             })
-
-        }, 500)
+        else {
+            this.setState({
+                start_time: new Date(Date.now()),
+                feedbackStatus: Array.from(this.props.activities, a => a.allow_feedback ? 'Available' : 'Not Available')
+            }, () => {
+                this.goToNextQuestion()
+            })
+        }
 
     }
     onDragAnswerToBlank(value,index,cur) {
@@ -131,10 +246,7 @@ export class PlayGame extends React.Component {
     }
     advanceState() {
         this.calculateScore()
-        //this.postAnswer()
-        if (this.state.currentQuestion < this.props.activities.length-1) {
-            this.setStateToNextQuestion()
-        }
+        this.setStateToNextQuestion()
 
     }
     renderState() {
@@ -163,6 +275,8 @@ export class PlayGame extends React.Component {
                     style={this.props.activities[this.state.currentQuestion].styles}>
                     <div className='align-self-stretch mt-2'>
                         <button className='btn btn-success float-right mx-2' onClick={this.advanceState}>Advance</button>
+                        <Timer displayTime = {this.state.maxTime - this.state.currentTime} callback = {this.timerCallback} />
+
                     </div>
 
                         <ActivityText
@@ -176,6 +290,18 @@ export class PlayGame extends React.Component {
                         options = {this.state.currentOptions}
                         />
                     </div>
+                )
+            }
+            case 'Results': {
+                return (
+                    <ResultScreen
+                    answers = {this.props.answers}
+                    activities = {this.props.activities}
+                    username = {this.props.user.username}
+                    score = {this.state.score}
+                    onFeedbackSend = {this.onFeedbackSend}
+                    feedbackStatus = {this.state.feedbackStatus}
+                    />
                 )
             }
             default: {
@@ -203,6 +329,7 @@ export class PlayGame extends React.Component {
 PlayGame.propTypes = {
     user: PropTypes.object.isRequired,
     activities: PropTypes.array.isRequired,
+    answers: PropTypes.array.isRequired,
     actions: PropTypes.object.isRequired,
     match: PropTypes.object.isRequired,
     history: PropTypes.object

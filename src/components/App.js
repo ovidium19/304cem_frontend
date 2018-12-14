@@ -9,8 +9,8 @@ import ProtectedResources from './common/ProtectedResources'
 import {Route} from 'react-router-dom'
 import PropTypes from  'prop-types'
 import toastr from 'toastr'
-toastr.options.timeOut = 100 // How long the toast will display without user interaction
-toastr.options.extendedTimeOut = 15 // How long the toast will display after a user hovers over it
+toastr.options.timeOut = 1000 // How long the toast will display without user interaction
+toastr.options.extendedTimeOut = 1500 // How long the toast will display after a user hovers over it
 class App extends React.Component {
     constructor(props){
         super(props)

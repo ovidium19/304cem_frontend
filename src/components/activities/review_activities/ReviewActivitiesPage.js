@@ -46,7 +46,7 @@ export class ReviewActivitiesPage extends React.Component {
                     })
                 })
                 .catch(err => {
-                    toastr.error(err.message)
+                    //toastr.error(err.message)
                 })
         }
     }

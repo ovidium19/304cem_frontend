@@ -10,6 +10,7 @@ import ActivityUpdate from '../activities/singleActivity/ActivityUpdate'
 import ReviewActivitiesPage from '../activities/review_activities/ReviewActivitiesPage'
 import PlayGame from '../game/PlayGame'
 
+
 class ProtectedResources extends React.Component {
     constructor(props) {
         super(props)
