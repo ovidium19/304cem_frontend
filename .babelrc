@@ -1,15 +1,5 @@
 {
-    "presets": [
-      "react",
-      ["env", {
-        "targets": {
-          "node": true
-        }
-      }]
-    ],
-    "env": {
-        "development": {
-          "presets": ["react-hmre"]
-        }
-      }
+    "presets": ["react", "env"],
+    "plugins": ["transform-object-rest-spread"]
   }
+

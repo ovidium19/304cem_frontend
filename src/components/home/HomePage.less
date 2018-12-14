@@ -1,0 +1,129 @@
+.home-container {
+    flex-grow: 1;
+    align-self: stretch;
+    position: relative;
+    background-size: cover;
+    background-clip: border-box;
+    overflow: auto;
+}
+span.overlay, .bg-main{
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: rgba(0,0,0,0.5);
+    display: block;
+    z-index:1;
+  }
+  .bg-main {
+      z-index: 0;
+  }
+  div.overlay-content{
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height:100%;
+    background: transparent;
+    z-index:2;
+    &.overlay-flex{
+      display: flex;
+      justify-content: center;
+      padding: 15px;
+    }
+}
+
+p.text-block{
+    position: absolute;
+    text-shadow: 2px 2px 4px #000000;
+    align-self: center;
+    justify-self: center;
+    font-weight: bold;
+    font-size:1.5rem;
+    width: 75%;
+    min-width: 50%;
+    @media all and (max-width: 1341px ) {
+        font-size:1.2rem;
+    }
+    @media all and (max-width: 1341px ) {
+        font-size:1rem;
+    }
+    @media all and (max-width: 1341px ) {
+        font-size:1rem;
+    }
+    color: white;
+  }
+  .carousel {
+
+    margin-top:150px;
+    .carousel-indicators{
+      position: absolute;
+      bottom:-20%;
+      align-self: baseline;
+      @media all and (max-width: 1341px ) {
+        bottom: 20%;
+        }
+        @media all and (max-width: 1341px ) {
+            bottom: -20%;
+        }
+        @media all and (max-width: 1341px ) {
+            top: -10%;
+        }
+      li{
+        border-radius: 50%;
+        height:18px;
+        width: 18px;
+      }
+    }
+    .carousel-inner{
+
+      height: 300px;
+      @media all and (max-width: 1341px ) {
+        height: 100%;
+          p.quote{
+            width: 80%;
+            margin:50px auto;
+
+          }
+        }
+      p.quote{
+        position: relative;
+        width: 50%;
+        margin:20px auto;
+        color: white;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px #000000;
+        line-height: 1.7;
+        font-size: 1.7rem;
+        text-align: center;
+        &:before,&:after{
+          content: "\201C";
+          position: absolute;
+          font-size: 7rem;
+          color: #9fb8ad;
+        }
+        &:before{
+          top:-60px;
+          left:-90px;
+          margin-right: 20px;
+
+        }
+        &:after{
+          bottom:-120px;
+          right:-90px;
+        }
+      }
+      p.author{
+        font-style: italic;
+        font-weight: bold;
+        font-size: 1.6rem;
+        text-shadow: 2px 2px 4px #000000;
+        margin-top:50px;
+      }
+
+    }
+  }
+.hide-overflow{
+  overflow-x: hidden;
+}

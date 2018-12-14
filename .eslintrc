@@ -52,7 +52,7 @@
       "react/jsx-indent-props": 0,
       "react/jsx-key": 1,
       "react/jsx-max-props-per-line": 0,
-      "react/jsx-no-bind": 1,
+      "react/jsx-no-bind": 0,
       "react/jsx-no-duplicate-props": 1,
       "react/jsx-no-literals": 0,
       "react/jsx-no-undef": 1,
@@ -73,7 +73,8 @@
       "react/react-in-jsx-scope": 1,
       "react/self-closing-comp": 1,
       "react/sort-comp": 1,
-      "react/jsx-wrap-multilines": 1
+      "react/jsx-wrap-multilines": 1,
+      "import/no-named-as-default": 0
     },
     "overrides": [
         {
