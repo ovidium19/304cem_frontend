@@ -19,6 +19,9 @@ import ActivityOptions from './ActivityOptions'
 import Timer from './Timer'
 import ResultScreen from './ResultScreen'
 
+/**
+ * @class - This class handles all the logic and state of playing a game of Fill in Blanks.
+ */
 export class PlayGame extends React.Component {
     constructor(props) {
         super(props)
@@ -54,20 +57,20 @@ export class PlayGame extends React.Component {
         this.onFeedbackSend = this.onFeedbackSend.bind(this)
     }
 
-    componentDidMount() {
-
-    }
     componentWillUnmount() {
         this.setState({
             gameState: 'finished'
         })
+        //revert the redux state of the game to its initial values
         this.props.actions.stopGame()
     }
     onChange(event) {
+        //handle form inputs when setting up a game.
         const field = event.target.name
         const params = Object.assign({},this.state.params)
         switch(field) {
             case 'allow_anon': {
+                //this comes back as a string but needs to be converted to boolean
                 params[field] = event.target.value == 'true' ? true : false
                 break
             }
@@ -78,28 +81,46 @@ export class PlayGame extends React.Component {
         this.setState({params})
 
     }
+    /**
+     * There is a small form when setting up a game, where user can choose a category and anonynmous status
+     * @param {Event} e - just to prevent default behaviour of submitting a form
+     */
     onSubmit(e) {
+
         e.preventDefault()
+        //Show loading icon while fetching questions
         this.setState({
             gameState: 'Loading',
             message: 'Loading Questions'
         })
         let params = {}
+        //Sanitize params to match API schema
         if (this.state.params.category !== 'Random') params.category = this.state.params.category
         if (this.state.params.allow_anon) params.allow_anon = this.state.params.allow_anon
+
+        //call redux-thunk to get game activities
         this.props.actions.getGameActivities(this.props.user.header,params)
             .then(res => {
                 console.log(res)
+                //Move to next question when they are ready
                 this.setStateToNextQuestion()
             }).catch(err => {
                 toastr.error(err.message)
             })
     }
+    /**
+     * Get all available options for all available blanks in the current activity and shuffle their order.
+     * @param {number} index - The current activity index
+     */
     getOptions(index) {
         let options = _.flatten(this.props.activities[index].options)
         return _.shuffle(options)
 
     }
+    /**
+     * The game timer calls this every second.
+     * If time reaches 30 seconds, we advance automatically to next question.
+     */
     timerCallback() {
 
         this.setState({
@@ -110,20 +131,33 @@ export class PlayGame extends React.Component {
             }
         })
     }
+    /**
+     *
+     * @param {Object} feedback - The feedback object created by the user - contains text and rating
+     * @param {number} index - This is the index of the activity which the user provided feedback for
+     */
     onFeedbackSend(feedback,index) {
-        console.log(feedback)
-        console.log(index)
-        console.log(this.state.feedbackStatus[index])
+        /**
+         * While processing the request, set the status of the feedback section to loading
+         * This renders a loading icon in place of the feedback form.
+         */
         let ff = Array.from(this.state.feedbackStatus)
         ff[index] = "Loading"
         this.setState({
             feedbackStatus: ff
         })
+        //if the question allows anonymous feedback, set username to empty string.
         let id = this.props.activities[index]._id
         let username = this.props.activities[index].allow_anon ? '' : this.props.user.username
         let refactoredFeedback = Object.assign({},feedback,{username})
+
+        //redux-thunk to post feedback to activity.
         this.props.actions.sendFeedback(this.props.user.header ,id,refactoredFeedback)
             .then(res => {
+                /**
+                 * When done, set feedback status to 'Sent', whch renders a green message
+                 * to let the user know the feedback was submitted
+                 */
                 let ff = Array.from(this.state.feedbackStatus)
                 ff[index] = "Sent"
                 this.setState({
@@ -135,7 +169,11 @@ export class PlayGame extends React.Component {
                 throw(err)
             })
     }
+    /**
+     * After each activity, we save the user's answer to that activity's collection entry.
+     */
     saveAnswer() {
+        //Set up the correctEach array. it should have objects that have a correct field and the answer given
         let question = this.props.activities[this.state.currentQuestion]
         let correctEach = []
         question.blanks.map((b,i) => {
@@ -144,6 +182,7 @@ export class PlayGame extends React.Component {
                 answer: this.state.showValues[i]
             })
         })
+        //find out if the user answered correctly
         let correctAll = correctEach.reduce((p,c) => p && c.correct, 1)
         let answer = {
             username: question.allow_anon ? "" : this.props.user.username,
@@ -153,19 +192,32 @@ export class PlayGame extends React.Component {
             correctEach,
             finished: true
         }
+        //this pushes the answer to our internal redux state, so that later on we can show
+        //all answers on the result screen.
         this.props.actions.pushAnswer(answer)
+
+        //redux-thunk to post answer to activity
         return this.props.actions.postAnswer(this.props.user.header,question._id,answer)
     }
+
+    /**
+     * At the end of a question, we call this function to advance state to next question
+     */
     goToNextQuestion() {
         let gameState = 'Show Question'
+
+        //If we ran out of questions, show Results
         if (this.state.currentQuestion == this.props.activities.length - 1) {
             gameState = 'Results'
         }
+        //this timeout is here just to show the loading animation a bit more
         setTimeout(() => {
+            //post results and show result screen
             if (gameState == 'Results') {
                 this.postResultsAndShow()
             }
             else{
+                //advance to next question if we still have questions available
                 this.setState({
                     gameState,
                     currentQuestion: this.state.currentQuestion + 1,
@@ -177,9 +229,12 @@ export class PlayGame extends React.Component {
 
             }
         }, 500)
-
-
     }
+    /**
+     * This function creates a results object specific to the DB schema
+     * Sends the results with a redux-thunk
+     * then sets the state to show the Results
+     */
     postResultsAndShow() {
         //format results to include question id
         let results = {}
@@ -203,6 +258,13 @@ export class PlayGame extends React.Component {
             })
 
     }
+
+    /**
+     * This function handles two cases.
+     * When game just started, this function starts recording the time and sets the feedbackStatus array which is
+     * needed for the Results screen
+     * When an answer is given, this function calls this.goToNextQuestion after saving the answer.
+     */
     setStateToNextQuestion() {
         console.log('Setting state to next question')
         this.setState({
@@ -222,8 +284,13 @@ export class PlayGame extends React.Component {
         }
 
     }
+    /**
+     *
+     * @param {string} value - Value of element dragged
+     * @param {number} index - Index of blank area dragged over
+     * @param {string} cur - Current blank value
+     */
     onDragAnswerToBlank(value,index,cur) {
-        console.log(value, index)
         let state =  Array.from(this.state.showValues)
         state[index] = value
         let options = Array.from(this.state.currentOptions)
@@ -249,6 +316,9 @@ export class PlayGame extends React.Component {
         this.setStateToNextQuestion()
 
     }
+    /**
+     * Based on this.state.gameState, we render one of the required pages.
+     */
     renderState() {
         switch ( this.state.gameState) {
             case 'Setting up': {

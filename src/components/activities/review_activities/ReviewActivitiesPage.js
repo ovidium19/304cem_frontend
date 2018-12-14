@@ -36,10 +36,10 @@ export class ReviewActivitiesPage extends React.Component {
 
     componentDidMount() {
         if (this.props.activities.length == 0 && this.state.updated == false) {
-            console.log("Should call activities")
+
             this.props.actions.getReviewActivities(this.props.user.header,this.state.options)
                 .then(res => {
-                    console.log(res)
+
                     this.setState({
                         loading: Array.from(this.props.activities, b => false),
                         status: Array.from(this.props.activities, b => '')
@@ -72,7 +72,7 @@ export class ReviewActivitiesPage extends React.Component {
             })
     }
     onPublish(act,index) {
-        console.log(`Publishing`)
+
         this.setIndexState(index,true,'')
         this.props.actions.publishActivity(this.props.user.header,act).then(res => {
             console.log(res)
@@ -82,7 +82,7 @@ export class ReviewActivitiesPage extends React.Component {
         })
     }
     onRemove(id, index) {
-        console.log(`Removing`)
+
         this.setIndexState(index,true,'')
         this.props.actions.declineActivity(this.props.user.header,id).then(res => {
             console.log(res)
