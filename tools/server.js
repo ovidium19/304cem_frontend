@@ -22,7 +22,7 @@ app.use(webMid(compiler),{
     noInfo: true,
     publicPath: config.output.publicPath
 })
-app.use(hotMid(compiler))
+//app.use(hotMid(compiler))
 app.use( async(ctx, next) => {
 	ctx.set('Access-Control-Allow-Origin', '*')
 	await next()

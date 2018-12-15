@@ -29,11 +29,11 @@ export class LoginPage extends React.Component {
 
     }
     validateForm() {
-        if (this.state.user.password.length < 6)
+        if (this.state.user.password.length < 4)
         {
             this.setState({
                 errors: {
-                    password: 'Your password must contain at least 6 characters'
+                    password: 'Your password must contain at least 4 characters'
                 }
             })
             return false
