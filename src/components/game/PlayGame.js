@@ -18,7 +18,26 @@ import LoadingSpinner from '../common/LoadingSpinner'
 import ActivityOptions from './ActivityOptions'
 import Timer from './Timer'
 import ResultScreen from './ResultScreen'
-
+let initialState = {
+    params: {
+        allow_anon: false,
+        category: 'Random'
+    },
+    gameState: 'Setting up',
+    showValues: [],
+    currentQuestion: -1,
+    currentOptions: [],
+    score: 0,
+    redirect: false,
+    link: '',
+    updated: false,
+    categoryOptions: categories,
+    time: [],
+    maxTime: 30,
+    currentTime: 0,
+    start_time: null,
+    feedbackStatus: []
+}
 /**
  * @class - This class handles all the logic and state of playing a game of Fill in Blanks.
  */
@@ -26,27 +45,7 @@ export class PlayGame extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            params: {
-                allow_anon: false,
-                category: 'Random'
-            },
-            gameState: 'Setting up',
-            showValues: [],
-            currentQuestion: -1,
-            currentOptions: [],
-            score: 0,
-            redirect: false,
-            link: '',
-            updated: false,
-            categoryOptions: categories,
-            time: [],
-            maxTime: 30,
-            currentTime: 0,
-            start_time: null,
-            feedbackStatus: []
-
-        }
+        this.state = JSON.parse(JSON.stringify(initialState))
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
         this.renderState = this.renderState.bind(this)
@@ -55,6 +54,7 @@ export class PlayGame extends React.Component {
         this.advanceState = this.advanceState.bind(this)
         this.timerCallback = this.timerCallback.bind(this)
         this.onFeedbackSend = this.onFeedbackSend.bind(this)
+        this.onReplay = this.onReplay.bind(this)
     }
 
     componentWillUnmount() {
@@ -316,6 +316,16 @@ export class PlayGame extends React.Component {
         this.setStateToNextQuestion()
 
     }
+    onReplay() {
+
+        let newState = JSON.parse(JSON.stringify(initialState))
+        console.log(newState)
+        this.setState({
+            ...newState
+        }, () => {
+            this.props.actions.stopGame()
+        })
+    }
     /**
      * Based on this.state.gameState, we render one of the required pages.
      */
@@ -371,6 +381,7 @@ export class PlayGame extends React.Component {
                     score = {this.state.score}
                     onFeedbackSend = {this.onFeedbackSend}
                     feedbackStatus = {this.state.feedbackStatus}
+                    onReplay = {this.onReplay}
                     />
                 )
             }

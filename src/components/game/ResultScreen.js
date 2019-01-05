@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {Link} from 'react-router-dom'
 import FeedbackSection from './FeedbackSection'
 
-const ResultScreen = ({onFeedbackSend, answers, activities, username, score, feedbackStatus }) => {
+const ResultScreen = ({onFeedbackSend, answers, activities, username, score, feedbackStatus, onReplay }) => {
     let result = score >= 60
     let message
     let hint
@@ -35,7 +35,8 @@ const ResultScreen = ({onFeedbackSend, answers, activities, username, score, fee
                     <div className='text-center'>{hint}</div>
                     <div className='mt-3 d-flex justify-content-around'>
                         <Link to={`/app/user/${username}/stats`} className='btn btn-success' >Your Stats</Link>
-                        <Link to={`/app/play`} className='btn btn-success'>Replay</Link>
+                        <button className='btn btn-success' onClick={onReplay}>Replay</button>
+
                     </div>
                 </div>
             </div>
