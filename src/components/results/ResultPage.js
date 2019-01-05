@@ -95,7 +95,10 @@ export class ResultPage extends React.Component {
                     </React.Fragment>
 
                     :
-                    <div>No data</div>
+                    <div className='d-flex justify-content-center align-items-center flex-column'>
+                                    <p className='lead mb-2'>You have no stats available because you haven't played the game.</p>
+                                    <Link to='/app/play' className='text-success font-weight-bold'>Play Game</Link>
+                    </div>
             }
             </div>
         )

@@ -11,9 +11,10 @@ export default function results(state=initialState.results, action){
         }
         case types.GET_RESULTS_STATS_SUCCESS: {
             let newState = JSON.parse(JSON.stringify(state))
-            console.log(action.data)
-            newState.avg_time = action.data.data[0].avg_time
-            newState.passrate = action.data.data[0].passrate
+            if (action.data.data.length > 0){
+                newState.avg_time = action.data.data[0].avg_time
+                newState.passrate = action.data.data[0].passrate
+            }
             return newState
         }
         case types.REMOVE_RESULTS: {
